@@ -23,21 +23,23 @@ public class Router
 {
     private static String[] Products = {"Mouse", "KeyBoard", "Tv", "Computer Screen"};
     private static final int PORT = 5000;
+    // private static final int PORTM = 5001;
     private static ArrayList<ClientHandler> clients = new ArrayList<>();
     private static ExecutorService pool = Executors.newFixedThreadPool(4);
     public static void main( String[] args)
     {
         try {
             ServerSocket listener = new ServerSocket(PORT);
-            while(true){
-                System.out.println("[SERVER] is waiting for client connection.");
-                Socket client = listener.accept();
-                System.out.println("[SERVER] connceted to client");
-                ClientHandler clientThread = new ClientHandler(client, clients);
-                clients.add(clientThread);
-                pool.execute(clientThread);
-
-            }
+            // ServerSocket listenerM = new ServerSocket(PORTM);
+                while(true){
+                    System.out.println("[SERVER] is waiting for client connection.");
+                    Socket client = listener.accept();
+                    // Socket clientM = listenerM.accept();
+                    System.out.println("[SERVER] connceted to client");
+                    ClientHandler clientThread = new ClientHandler(client, clients);
+                    clients.add(clientThread);
+                    pool.execute(clientThread);
+                }
             // PrintWriter out = new PrintWriter(client.getOutputStream(), true);
             // BufferedReader in = new BufferedReader( new InputStreamReader(client.getInputStream()));
             

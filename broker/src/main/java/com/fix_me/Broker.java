@@ -23,26 +23,28 @@ public class Broker
             // Scanner scan = new Scanner(new InputStreamReader(s.getInputStream()));
             BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));
 
-
             // ServerConnection serverConn = new ServerConnection(socket);
             BufferedReader keyBoard = new BufferedReader(new InputStreamReader(System.in));
             PrintWriter out = new PrintWriter(s.getOutputStream(), true);
 
+            int count = 0;
+            String command = null;
+            String serverResponse = null;
             // new Thread(serverConn).start();
             while (true){
 
-                System.out.println("> ");
-                String command = keyBoard.readLine();
+                    System.out.println("> ");
+                    command = keyBoard.readLine();
+                    if (command.toLowerCase().equals("quit"))
+                    break ;
 
-                if (command.toLowerCase().equals("quit"))
-                break ;
+                    out.println(command);
 
-
-                out.println(command);
-                
-                String serverResponse = input.readLine();
+                serverResponse = input.readLine();
+                while (serverResponse.equals(null)){
+                }
                 System.out.println("Server Says: "+serverResponse);
-                // JOptionPane.showMessageDialog( null, serverResponse);
+                serverResponse = null;
             }
                 // write.println("Hello computer");
                 s.close();

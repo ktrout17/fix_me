@@ -23,28 +23,54 @@ public class Market {
             BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));
             BufferedReader keyBoard = new BufferedReader(new InputStreamReader(System.in));
             PrintWriter out = new PrintWriter(s.getOutputStream(), true);
+            Boolean ifTrue = false;
 
+            String command = "market";
             while (true){
 
-                System.out.println("> ");
-                String command = keyBoard.readLine();
+                // System.out.println("> ");
+                // String command = keyBoard.readLine();
 
                 if (command.toLowerCase().equals("quit"))
                 break ;
 
-
-                out.println(command);
+                if (command.equals("market")){
+                    out.println(command);
+                    command = null;
+                }
                 
                 String serverResponse = input.readLine();
-                System.out.println("Server Says: "+serverResponse);
-                if (serverResponse.toLowerCase().equals("hello world")){
-                    System.out.println("Accept");
-                    command = "Accept";
-                    out.println(command);
-                }else{
-                    System.out.println("Decline"); 
-                    command = "Decline";
-                    out.println(command);
+                // "Mouse", "KeyBoard", "Tv", "Computer Screen"
+                // System.out.println("Server Says: "+serverResponse);
+                if (!serverResponse.equals("Are you the broker or market?") || serverResponse.equals(null)){
+
+                    System.out.println("Server Says: "+serverResponse);
+                    if (serverResponse.toLowerCase().equals("mouse")){
+                        System.out.println("Accept");
+                        command = "Accept";
+                        out.println(command);
+                        serverResponse = null;
+                    }else if (serverResponse.toLowerCase().equals("keyboard")){
+                        System.out.println("Accept");
+                        command = "Accept";
+                        out.println(command);
+                        serverResponse = null;
+                    }else if (serverResponse.toLowerCase().equals("tv")){
+                        System.out.println("Decline");
+                        command = "Decline";
+                        out.println(command);
+                        serverResponse = null;
+                    }else if (serverResponse.toLowerCase().equals("computer screen")){
+                        System.out.println("Decline");
+                        command = "Decline";
+                        out.println(command);
+                        serverResponse = null;
+                    }else{
+                        System.out.println("Decline"); 
+                        command = "Decline";
+                        out.println(command);
+                        serverResponse = null;
+                    }
                 }
                 // JOptionPane.showMessageDialog( null, serverResponse);
             }

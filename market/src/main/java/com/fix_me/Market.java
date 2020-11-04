@@ -65,8 +65,10 @@ public class Market {
                         command = "Decline";
                         out.println(command);
                         serverResponse = null;
+                    }else if (serverResponse.toLowerCase().equals("quit")){
+                        break;
                     }else{
-                        System.out.println("Decline"); 
+                        // System.out.println("Decline"); 
                         command = "Decline";
                         out.println(command);
                         serverResponse = null;

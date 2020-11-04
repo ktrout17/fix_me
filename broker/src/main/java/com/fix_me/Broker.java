@@ -11,6 +11,9 @@ import java.net.Socket;
 import java.io.PrintWriter;
 import java.io.BufferedReader;
 import javax.swing.JOptionPane;
+import java.util.concurrent.TimeUnit;
+import java.util.Scanner;
+import java.io.File;
 // import java.io.
 public class Broker 
 {
@@ -21,8 +24,25 @@ public class Broker
         try {
             Socket s = new Socket(serverIp, serverPort);
             // Scanner scan = new Scanner(new InputStreamReader(s.getInputStream()));
-            BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));
+            File fix_message = new File("broker/src/main/java/com/fix_me/Fix_messages.txt");
+            Boolean exists = fix_message.exists();
+            if (!exists){
+                System.out.println("file does not exists, Creating file.");
+                fix_message.createNewFile();
+            }
+            String messageContent = null;
+            // Scanner scan = new Scanner(fix_message);
+            Scanner scan = new Scanner(fix_message);
+            // while(scan.hasNextLine())
+            // {
+            //     messageContent = scan.nextLine();
+            // }
+            // System.out.println(messageContent);
+            // String[] newString = messageContent.split(" ", 0);
+            // System.out.println(newString[0]);
+            // System.out.println(newString[1]);
 
+            BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));
             // ServerConnection serverConn = new ServerConnection(socket);
             BufferedReader keyBoard = new BufferedReader(new InputStreamReader(System.in));
             PrintWriter out = new PrintWriter(s.getOutputStream(), true);
@@ -32,16 +52,23 @@ public class Broker
             String serverResponse = null;
             // new Thread(serverConn).start();
             while (true){
-
                     System.out.println("> ");
-                    command = keyBoard.readLine();
-                    if (command.toLowerCase().equals("quit"))
-                    break ;
-
+                    // command = keyBoard.readLine();
+                    command = scan.nextLine();
+                    if (command.toLowerCase().equals("quit")){
+                        out.println(command);
+                        // TimeUnit.SECONDS.sleep(200);
+                        break ;
+                    }
                     out.println(command);
-
+                if (count == 0){
+                    System.out.println("Waiting for Market to come online.");
+                    count++;
+                }
                 serverResponse = input.readLine();
                 while (serverResponse.equals(null)){
+                    // if (serverResponse.equals("market is online"))
+                    // break;
                 }
                 System.out.println("Server Says: "+serverResponse);
                 serverResponse = null;

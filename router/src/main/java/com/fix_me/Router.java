@@ -43,8 +43,7 @@ public class Router
                         System.out.println("[SERVER] connceted to client");
                         clientThread = new ClientHandler(client, clients);
                         clients.add(clientThread);
-                    }
-                    else if (count == 1){
+                    }else if (count == 1){
                         clientM = listenerM.accept();
                         count = 0;
                         System.out.println("[SERVER] connceted to client");

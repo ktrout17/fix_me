@@ -48,10 +48,12 @@ public class ClientHandler implements Runnable {
                     if (market > 0){
                         // out.println("market is online");
                         outToAll();
-
                     }else{
-                        out.println("market is offline");
+                        // out.println("market is offline");
                     }
+                }else if (request.contains("quit")){
+                    outToMarketQuit(market);
+                    // quitCorrect(market);
                 }else if (request.contains("market")){
                     name = "market";
                     out.println("you are the market");
@@ -68,6 +70,7 @@ public class ClientHandler implements Runnable {
             }
         } catch(NullPointerException e){
             System.out.println("ERROR: Closed connection with out useing quit.");
+            quit(market);
         } catch(IOException e){
             System.out.println("ERROR: "+e);
         } finally{
@@ -86,12 +89,28 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    private void quit(int market){
+        for ( ClientHandler aClient: clients){
+            if (aClient.name == "market")
+            market--;
+        }
+    }
+
     private void outToAll(){
         for ( ClientHandler aClient: clients){
             if (aClient.name == "market")
             aClient.out.println(getRandomName());
         }
     }
+
+    private void outToMarketQuit(int market){
+        for ( ClientHandler aClient: clients){
+            if (aClient.name == "market")
+            aClient.out.println("quit");
+            market--;
+        }
+    }
+
     private void outToBrokerAccept(){
         for ( ClientHandler aClient: clients){
             if (aClient.name == "broker")

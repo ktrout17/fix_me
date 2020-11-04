@@ -14,7 +14,7 @@ import javax.swing.JOptionPane;
 // import java.io.
 public class Market {
     private static final String serverIp = "192.168.0.25";
-    private static final int serverPort = 5000;
+    private static final int serverPort = 5001;
     public static void main( String[] args )
     {
         try {

@@ -23,21 +23,37 @@ public class Router
 {
     private static String[] Products = {"Mouse", "KeyBoard", "Tv", "Computer Screen"};
     private static final int PORT = 5000;
-    // private static final int PORTM = 5001;
+    private static final int PORTM = 5001;
     private static ArrayList<ClientHandler> clients = new ArrayList<>();
     private static ExecutorService pool = Executors.newFixedThreadPool(4);
     public static void main( String[] args)
     {
         try {
             ServerSocket listener = new ServerSocket(PORT);
-            // ServerSocket listenerM = new ServerSocket(PORTM);
+            ServerSocket listenerM = new ServerSocket(PORTM);
+            int count = 0;
+            Socket client = null;
+            Socket clientM = null;
+            ClientHandler clientThread = null;
                 while(true){
                     System.out.println("[SERVER] is waiting for client connection.");
-                    Socket client = listener.accept();
-                    // Socket clientM = listenerM.accept();
-                    System.out.println("[SERVER] connceted to client");
-                    ClientHandler clientThread = new ClientHandler(client, clients);
-                    clients.add(clientThread);
+                    if (count == 0){
+                        client = listener.accept();
+                        count++;
+                        System.out.println("[SERVER] connceted to client");
+                        clientThread = new ClientHandler(client, clients);
+                        clients.add(clientThread);
+                    }
+                    else if (count == 1){
+                        clientM = listenerM.accept();
+                        count = 0;
+                        System.out.println("[SERVER] connceted to client");
+                        clientThread = new ClientHandler(clientM, clients);
+                        clients.add(clientThread);
+                    }
+                    // System.out.println("[SERVER] connceted to client");
+                    // clientThread = new ClientHandler(client, clients);
+                    // clients.add(clientThread);
                     pool.execute(clientThread);
                 }
             // PrintWriter out = new PrintWriter(client.getOutputStream(), true);

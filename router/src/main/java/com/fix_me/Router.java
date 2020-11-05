@@ -37,17 +37,17 @@ public class Router
             ClientHandler clientThread = null;
                 while(true){
                     System.out.println("[SERVER] is waiting for client connection.");
-                    if (count == 0){
+                    if (clientM == null) {
+                        System.out.println("Waiting for Market to connect...");
+                        clientM = listenerM.accept();
+                        System.out.println("[SERVER] connceted to market");
+                        clientThread = new ClientHandler(clientM, clients);
+                        clients.add(clientThread);
+					}else{
+
                         client = listener.accept();
-                        count++;
                         System.out.println("[SERVER] connceted to client");
                         clientThread = new ClientHandler(client, clients);
-                        clients.add(clientThread);
-                    }else if (count == 1){
-                        clientM = listenerM.accept();
-                        count = 0;
-                        System.out.println("[SERVER] connceted to client");
-                        clientThread = new ClientHandler(clientM, clients);
                         clients.add(clientThread);
                     }
                     // System.out.println("[SERVER] connceted to client");

@@ -14,10 +14,10 @@ import javax.swing.JOptionPane;
 import java.util.concurrent.TimeUnit;
 import java.util.Scanner;
 import java.io.File;
-// import java.io.
+
 public class Broker 
 {
-    private static final String serverIp = "192.168.0.25";
+    private static final String serverIp = "127.0.0.1";
     private static final int serverPort = 5000;
     public static void main( String[] args )
     {
@@ -52,7 +52,7 @@ public class Broker
             String serverResponse = null;
             // new Thread(serverConn).start();
             while (true){
-                    System.out.println("> ");
+                    // System.out.println("> ");
                     // command = keyBoard.readLine();
                     command = scan.nextLine();
                     if (command.toLowerCase().equals("quit")){

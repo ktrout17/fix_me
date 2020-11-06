@@ -1,1 +1,1 @@
-java -cp broker/target/broker-1.0-SNAPSHOT.jar com.fix_me.Broker
+java -jar broker/target/broker.jar

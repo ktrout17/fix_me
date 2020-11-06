@@ -1,1 +1,1 @@
-java -cp router/target/router-1.0-SNAPSHOT.jar com.fix_me.Router
+java -jar router/target/router.jar

@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
-import com.fix_me.*;
 
 import java.util.Date;
 
@@ -44,7 +43,6 @@ public class Router
                         clientThread = new ClientHandler(clientM, clients);
                         clients.add(clientThread);
 					}else{
-
                         client = listener.accept();
                         System.out.println("[SERVER] connceted to client");
                         clientThread = new ClientHandler(client, clients);

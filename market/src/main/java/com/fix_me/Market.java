@@ -11,9 +11,9 @@ import java.net.Socket;
 import java.io.PrintWriter;
 import java.io.BufferedReader;
 import javax.swing.JOptionPane;
-// import java.io.
+
 public class Market {
-    private static final String serverIp = "192.168.0.25";
+    private static final String serverIp = "127.0.0.1";
     private static final int serverPort = 5001;
     public static void main( String[] args )
     {

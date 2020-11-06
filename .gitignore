@@ -2,3 +2,6 @@
 broker/target
 market/target
 router/target
+.project
+.classpath
+org.eclipse.*

@@ -2,17 +2,10 @@ package com.fix_me;
 
 import java.io.IOException;
 import java.util.Scanner;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.io.PrintWriter;
 import java.io.BufferedReader;
-import javax.swing.JOptionPane;
-import java.util.concurrent.TimeUnit;
-import java.util.Scanner;
 import java.io.File;
 
 public class Broker 
@@ -30,7 +23,7 @@ public class Broker
                 System.out.println("file does not exists, Creating file.");
                 fix_message.createNewFile();
             }
-            String messageContent = null;
+            // String messageContent = null;
             // Scanner scan = new Scanner(fix_message);
             Scanner scan = new Scanner(fix_message);
             // while(scan.hasNextLine())
@@ -53,26 +46,27 @@ public class Broker
             // new Thread(serverConn).start();
             while (true){
                     // System.out.println("> ");
-                    // command = keyBoard.readLine();
-                    command = scan.nextLine();
+                    command = keyBoard.readLine();
+                    // command = scan.nextLine();
                     if (command.toLowerCase().equals("quit")){
                         out.println(command);
                         // TimeUnit.SECONDS.sleep(200);
                         break ;
                     }
                     out.println(command);
-                if (count == 0){
-                    System.out.println("Waiting for Market to come online.");
-                    count++;
-                }
-                serverResponse = input.readLine();
-                while (serverResponse.equals(null)){
+                // if (count == 0){
+                //     System.out.println("Waiting for Market to come online.");
+                //     count++;
+                // }
+                // serverResponse = input.readLine();
+                // while (serverResponse.equals(null)){
                     // if (serverResponse.equals("market is online"))
                     // break;
-                }
-                System.out.println("Server Says: "+serverResponse);
-                serverResponse = null;
-            }
+                // }
+                // System.out.println("Server Says: "+serverResponse);
+                // serverResponse = null;
+			}
+			// scan.close();
                 // write.println("Hello computer");
                 s.close();
             // System.exit(0);

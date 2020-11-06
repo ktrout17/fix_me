@@ -1,2 +1,1 @@
-mvn clean
-mvn package
+mvn clean package

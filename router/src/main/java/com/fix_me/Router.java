@@ -29,20 +29,22 @@ public class Router {
 			Socket client = null;
 			Socket clientM = null;
 			ClientHandler clientThread = null;
+			System.out.println("[ROUTER] is running.");
 			while (true) {
-				System.out.println("[SERVER] is waiting for client connection.");
+//				System.out.println("[ROUTER] is waiting for client connection.");
 				if (clientM == null) {
-					System.out.println("Waiting for Market to connect...");
+					System.out.println("[ROUTER] Waiting for Market to connect...");
 					clientM = listenerM.accept();
-					System.out.println("[SERVER] connceted to market");
 					String id = generateID(clientM);
+					System.out.println("[ROUTER] new Market (" + id + ") connected.");
 					clientThread = new ClientHandler(clientM, clients);
 					// clients.add(clientThread);
 					addTORoutingTable(id, clientThread);
 				} else {
+					System.out.println("[ROUTER] Waiting for Broker to connect...");
 					client = listener.accept();
-					System.out.println("[SERVER] connceted to client");
 					String id = generateID(client);
+					System.out.println("[ROUTER] new Broker (" + id + ") connected.");
 					clientThread = new ClientHandler(client, clients);
 					// clients.add(clientThread);
 					addTORoutingTable(id, clientThread);

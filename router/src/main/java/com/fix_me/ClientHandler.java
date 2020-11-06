@@ -86,7 +86,7 @@ public class ClientHandler implements Runnable {
 
 	private void handleRequest(String request) {
 		// TODO: handle FIX message
-		String id = "Get this from the fix message";
+		String id = "Get this from the fix message MARKETID";
 
 		Set<Map.Entry<String, ClientHandler>> values = clients.entrySet();
 		for (Map.Entry<String, ClientHandler> value : values) {

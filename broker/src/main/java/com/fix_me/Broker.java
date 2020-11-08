@@ -1,12 +1,10 @@
 package com.fix_me;
 
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.Scanner;
-import java.io.InputStreamReader;
 import java.net.Socket;
-import java.io.PrintWriter;
-import java.io.BufferedReader;
-import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 public class Broker 
 {
@@ -16,24 +14,26 @@ public class Broker
     {
         try {
             Socket s = new Socket(serverIp, serverPort);
-            // Scanner scan = new Scanner(new InputStreamReader(s.getInputStream()));
-            File fix_message = new File("broker/src/main/java/com/fix_me/Fix_messages.txt");
+            System.out.println("[BROKER] connected to Router.");
+//            startTransaction(s);
+//            Scanner scan = new Scanner(new InputStreamReader(s.getInputStream()));
+            File fix_message = new File("FIXMessage.txt");
+            Scanner scan  = new Scanner(fix_message);
             Boolean exists = fix_message.exists();
             if (!exists){
                 System.out.println("file does not exists, Creating file.");
                 fix_message.createNewFile();
             }
-            // String messageContent = null;
-            // Scanner scan = new Scanner(fix_message);
-            Scanner scan = new Scanner(fix_message);
-            // while(scan.hasNextLine())
-            // {
-            //     messageContent = scan.nextLine();
-            // }
-            // System.out.println(messageContent);
-            // String[] newString = messageContent.split(" ", 0);
-            // System.out.println(newString[0]);
-            // System.out.println(newString[1]);
+             String messageContent = null;
+             while(scan.hasNextLine())
+             {
+                 messageContent = scan.nextLine();
+                 System.out.println(messageContent);
+
+             }
+//             String[] newString = messageContent.split(" ", 0);
+//             System.out.println(newString[0]);
+//             System.out.println(newString[1]);
 
             BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));
             // ServerConnection serverConn = new ServerConnection(socket);
@@ -75,6 +75,41 @@ public class Broker
         } catch (Exception e) {
             System.out.println("ERROR: "+e);
             //TODO: handle exception
+        }
+    }
+
+    public static void startTransaction(Socket s) {
+        ArrayList<String> FIXMessages = readFIXMsgs();
+        MessageHandler check;
+        for (int i = 0; i < FIXMessages.size(); i++) {
+            check = new MessageHandler(FIXMessages.get(i));
+            printMsg(FIXMessages.get(i) + "|10=" + check.CalculateChecksum(FIXMessages.get(i)));
+            Sleep(4);
+        }
+    }
+
+    private static ArrayList<String> readFIXMsgs() {
+        ArrayList<String> FIXMsgs = new ArrayList<>();
+
+        try (BufferedReader br = new BufferedReader((new FileReader("FIXMessage.txt")))) {
+            while (br.ready()) {
+                FIXMsgs.add((br.readLine()));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return FIXMsgs;
+    }
+
+    public static void printMsg(String message) {
+        System.out.println("[BROKER] " + message);
+    }
+
+    private static void Sleep(long time) {
+        try {
+            TimeUnit.SECONDS.sleep(time);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }

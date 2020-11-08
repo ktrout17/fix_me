@@ -13,6 +13,7 @@ public class Market {
     {
         try {
             Socket s = new Socket(serverIp, serverPort);
+            System.out.println("[MARKET] connected to Router.");
             // Scanner scan = new Scanner(new InputStreamReader(s.getInputStream()));
             // BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));
             BufferedReader keyBoard = new BufferedReader(new InputStreamReader(System.in));

@@ -19,7 +19,13 @@
 		<maven.compiler.source>14</maven.compiler.source>
 		<maven.compiler.target>14</maven.compiler.target>
 	</properties>
-
+	<dependencies>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.8</version>
+		</dependency>
+	</dependencies>
 	<build>
 		<finalName>${project.artifactId}</finalName>
 		<plugins>

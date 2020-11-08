@@ -1,9 +1,6 @@
 package com.fix_me;
 
-import java.io.IOException;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Map;
@@ -64,7 +61,7 @@ public class ClientHandler implements Runnable {
 				// out.println("Are you the broker or market?");
 			}
 		} catch (NullPointerException e) {
-			System.out.println("ERROR: Closed connection with out useing quit.");
+			System.out.println("ERROR: Closed connection with out using quit.");
 			// quit(market);
 		} catch (IOException e) {
 			System.out.println("ERROR: " + e);
@@ -86,6 +83,9 @@ public class ClientHandler implements Runnable {
 
 	private void handleRequest(String request) {
 		// TODO: handle FIX message
+//		ArrayList<String> FIXmessages = readFIXMsgs();
+
+
 		String id = "Get this from the fix message MARKETID";
 
 		Set<Map.Entry<String, ClientHandler>> values = clients.entrySet();

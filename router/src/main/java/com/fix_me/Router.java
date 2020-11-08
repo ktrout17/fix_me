@@ -1,5 +1,6 @@
 package com.fix_me;
 
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -16,8 +17,8 @@ public class Router {
 	private static ServerSocket listener = null;
 	private static ServerSocket listenerM = null;
 	// private static ArrayList<ClientHandler> clients = new ArrayList<>();
-	private static Map<String, ClientHandler> clients = new HashMap<>();
-	private static ExecutorService pool = Executors.newFixedThreadPool(4);
+	private static final Map<String, ClientHandler> clients = new HashMap<>();
+	private static final ExecutorService pool = Executors.newFixedThreadPool(4);
 
 	private static int brokerCount = 0;
 	private static int marketCount = 0;
@@ -31,14 +32,12 @@ public class Router {
 			ClientHandler clientThread = null;
 			System.out.println("[ROUTER] is running.");
 			while (true) {
-//				System.out.println("[ROUTER] is waiting for client connection.");
 				if (clientM == null) {
 					System.out.println("[ROUTER] Waiting for Market to connect...");
 					clientM = listenerM.accept();
 					String id = generateID(clientM);
 					System.out.println("[ROUTER] new Market (" + id + ") connected.");
 					clientThread = new ClientHandler(clientM, clients);
-					// clients.add(clientThread);
 					addTORoutingTable(id, clientThread);
 				} else {
 					System.out.println("[ROUTER] Waiting for Broker to connect...");
@@ -46,7 +45,6 @@ public class Router {
 					String id = generateID(client);
 					System.out.println("[ROUTER] new Broker (" + id + ") connected.");
 					clientThread = new ClientHandler(client, clients);
-					// clients.add(clientThread);
 					addTORoutingTable(id, clientThread);
 				}
 				pool.execute(clientThread);
@@ -61,7 +59,7 @@ public class Router {
 	}
 
 	private static String generateID(Socket channel) {
-		StringBuilder id = new StringBuilder("");
+		StringBuilder id = new StringBuilder();
 		String uniqueId = null;
 
 		switch (channel.getLocalPort()) {
@@ -85,7 +83,7 @@ public class Router {
 			}
 		}
 		return uniqueId;
-		// addTORoutingTable(uniqueId, channel);
+//		 addTORoutingTable(uniqueId, channel);
 	}
 
 	private static void addTORoutingTable(String id, ClientHandler channel) {
@@ -97,7 +95,7 @@ public class Router {
 		while (id.length() + Integer.toString(count).length() < 6) {
 			id.append("0");
 		}
-		id.append(Integer.toString(count));
+		id.append(count);
 		return id.toString();
 	}
 

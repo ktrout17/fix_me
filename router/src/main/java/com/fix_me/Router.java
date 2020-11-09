@@ -39,6 +39,7 @@ public class Router {
 					System.out.println("[ROUTER] new Market (" + id + ") connected.");
 					clientThread = new ClientHandler(clientM, clients);
 					addTORoutingTable(id, clientThread);
+//					System.out.println("Map: " + clients);
 				} else {
 					System.out.println("[ROUTER] Waiting for Broker to connect...");
 					client = listener.accept();
@@ -46,6 +47,7 @@ public class Router {
 					System.out.println("[ROUTER] new Broker (" + id + ") connected.");
 					clientThread = new ClientHandler(client, clients);
 					addTORoutingTable(id, clientThread);
+//					System.out.println("Map: " + clients);
 				}
 				pool.execute(clientThread);
 			}
@@ -58,7 +60,7 @@ public class Router {
 		}
 	}
 
-	private static String generateID(Socket channel) {
+	public static String generateID(Socket channel) {
 		StringBuilder id = new StringBuilder();
 		String uniqueId = null;
 
@@ -91,7 +93,7 @@ public class Router {
 		clients.put(id, channel);
 	}
 
-	private static String numberPadding(StringBuilder id, int count) {
+	public static String numberPadding(StringBuilder id, int count) {
 		while (id.length() + Integer.toString(count).length() < 6) {
 			id.append("0");
 		}
@@ -99,11 +101,11 @@ public class Router {
 		return id.toString();
 	}
 
-	private static int nextBrokerId() {
+	public static int nextBrokerId() {
 		return (++brokerCount);
 	}
 
-	private static int nextMarketId() {
+	public static int nextMarketId() {
 		return (++marketCount);
 	}
 }

@@ -21,16 +21,16 @@ public class Broker
             Scanner scan  = new Scanner(fix_message);
             Boolean exists = fix_message.exists();
             if (!exists){
-                System.out.println("file does not exists, Creating file.");
+                System.out.println("File does not exist, Creating file.");
                 fix_message.createNewFile();
             }
-             String messageContent = null;
-             while(scan.hasNextLine())
-             {
-                 messageContent = scan.nextLine();
-                 System.out.println(messageContent);
-
-             }
+//             String messageContent = null;
+//             while(scan.hasNextLine())
+//             {
+//                 messageContent = scan.nextLine();
+//                 System.out.println(messageContent);
+//
+//             }
 //             String[] newString = messageContent.split(" ", 0);
 //             System.out.println(newString[0]);
 //             System.out.println(newString[1]);
@@ -44,29 +44,29 @@ public class Broker
             String command = null;
             String serverResponse = null;
             // new Thread(serverConn).start();
-            while (true){
+            while (scan.hasNextLine()){
                     // System.out.println("> ");
-                    command = keyBoard.readLine();
-                    // command = scan.nextLine();
-                    if (command.toLowerCase().equals("quit")){
-                        out.println(command);
-                        // TimeUnit.SECONDS.sleep(200);
-                        break ;
-                    }
+//                    command = keyBoard.readLine();
+                command = scan.nextLine();
+                System.out.println(command);
+                if (command.toLowerCase().equals("quit")){
                     out.println(command);
+                        // TimeUnit.SECONDS.sleep(200);
+                    break ;
+                }
+                out.println(command);
                 // if (count == 0){
                 //     System.out.println("Waiting for Market to come online.");
                 //     count++;
                 // }
-                // serverResponse = input.readLine();
                 // while (serverResponse.equals(null)){
                     // if (serverResponse.equals("market is online"))
                     // break;
                 // }
-                // System.out.println("Server Says: "+serverResponse);
-                // serverResponse = null;
-			}
-			// scan.close();
+            }
+            serverResponse = input.readLine();
+            System.out.println("Server Says: "+serverResponse);
+            scan.close();
                 // write.println("Hello computer");
                 s.close();
             // System.exit(0);
@@ -78,15 +78,15 @@ public class Broker
         }
     }
 
-    public static void startTransaction(Socket s) {
-        ArrayList<String> FIXMessages = readFIXMsgs();
-        MessageHandler check;
-        for (int i = 0; i < FIXMessages.size(); i++) {
-            check = new MessageHandler(FIXMessages.get(i));
-            printMsg(FIXMessages.get(i) + "|10=" + check.CalculateChecksum(FIXMessages.get(i)));
-            Sleep(4);
-        }
-    }
+//    public static void startTransaction(Socket s) {
+//        ArrayList<String> FIXMessages = readFIXMsgs();
+//        MessageHandler check;
+//        for (int i = 0; i < FIXMessages.size(); i++) {
+//            check = new MessageHandler(FIXMessages.get(i));
+//            printMsg(FIXMessages.get(i) + "|10=" + check.CalculateChecksum(FIXMessages.get(i)));
+//            Sleep(4);
+//        }
+//    }
 
     private static ArrayList<String> readFIXMsgs() {
         ArrayList<String> FIXMsgs = new ArrayList<>();

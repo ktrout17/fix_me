@@ -13,7 +13,7 @@ public class ClientHandler implements Runnable {
 	private Socket client;
 	private BufferedReader in;
 	private PrintWriter out;
-	private String name = null;
+	private String id;
 	// private ArrayList<ClientHandler> clients;
 	private Map<String, ClientHandler> clients;
 	// private static int broker = 0;
@@ -32,10 +32,12 @@ public class ClientHandler implements Runnable {
 	}
 
 	public void run() {
+		id = generateID(client);
 		try {
 			while (true) {
 				String request = in.readLine();
 				handleRequest(request);
+				out.println(id);
 				// if (request.contains("broker")) {
 				// // out.println( Router.getRandomName() );
 				// name = "broker";
@@ -84,14 +86,14 @@ public class ClientHandler implements Runnable {
 	private void handleRequest(String request) {
 		// TODO: handle FIX message
 //		ArrayList<String> FIXmessages = readFIXMsgs();
-
+//		clients.get("String");
 
 		String id = "Get this from the fix message MARKETID";
 
 		Set<Map.Entry<String, ClientHandler>> values = clients.entrySet();
 		for (Map.Entry<String, ClientHandler> value : values) {
 			if (value.getKey().equals(id)) {
-				value.getValue().out.println("Send msg to the respective port");
+				value.getValue().out.println(request);
 			}
 		}
 	}
@@ -140,5 +142,25 @@ public class ClientHandler implements Runnable {
 		// System.out.println(randomNumber);
 		String randomName = Products[randomNumber];
 		return randomName;
+	}
+
+	public static String generateID(Socket channel) {
+		StringBuilder id = new StringBuilder();
+		String uniqueId = null;
+
+		switch (channel.getLocalPort()) {
+			case 5000:
+				id.append("B");
+				uniqueId = Router.numberPadding(id, Router.nextBrokerId());
+				break;
+			case 5001:
+				id.append("M");
+				uniqueId = Router.numberPadding(id, Router.nextMarketId());
+			default:
+				break;
+		}
+
+		return uniqueId;
+//		 addTORoutingTable(uniqueId, channel);
 	}
 }

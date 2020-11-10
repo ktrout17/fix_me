@@ -25,7 +25,7 @@ public class Broker
             }
             // String messageContent = null;
             // Scanner scan = new Scanner(fix_message);
-            Scanner scan = new Scanner(fix_message);
+			Scanner scan = new Scanner(fix_message);
             // while(scan.hasNextLine())
             // {
             //     messageContent = scan.nextLine();
@@ -37,23 +37,25 @@ public class Broker
 
             BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));
             // ServerConnection serverConn = new ServerConnection(socket);
-            BufferedReader keyBoard = new BufferedReader(new InputStreamReader(System.in));
+            // BufferedReader keyBoard = new BufferedReader(new InputStreamReader(System.in));
             PrintWriter out = new PrintWriter(s.getOutputStream(), true);
 
             int count = 0;
             String command = null;
             String serverResponse = null;
             // new Thread(serverConn).start();
-            while (true){
+            // while (true){
                     // System.out.println("> ");
-                    command = keyBoard.readLine();
-                    // command = scan.nextLine();
-                    if (command.toLowerCase().equals("quit")){
-                        out.println(command);
+                    // command = keyBoard.readLine();
+					command = scan.nextLine();
+					MessageHandler handler = new MessageHandler(command);
+					// out.println(handler);
+                    // if (command.toLowerCase().equals("quit")){
+                    //     out.println(command);
                         // TimeUnit.SECONDS.sleep(200);
-                        break ;
-                    }
-                    out.println(command);
+                        // break ;
+                    // }
+                    // out.println(command);
                 // if (count == 0){
                 //     System.out.println("Waiting for Market to come online.");
                 //     count++;
@@ -65,8 +67,8 @@ public class Broker
                 // }
                 // System.out.println("Server Says: "+serverResponse);
                 // serverResponse = null;
-			}
-			// scan.close();
+			// }
+			scan.close();
                 // write.println("Hello computer");
                 s.close();
             // System.exit(0);

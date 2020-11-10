@@ -38,6 +38,7 @@ public class ClientHandler implements Runnable {
 		marketId = Router.marketId;
 		try {
 			while (true) {
+				out.println(brokerId);
 				String request = in.readLine();
 				request = "49=" + brokerId + "|56=" + marketId + request;
 				handleRequest(request);
@@ -102,7 +103,6 @@ public class ClientHandler implements Runnable {
 				value.getValue().out.println(FIXMsg);
 			}
 		}
-//		System.out.println(id);
 		System.out.println("FIXMsg: " + FIXMsg);
 	}
 

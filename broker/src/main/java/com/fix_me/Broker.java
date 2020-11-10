@@ -17,8 +17,7 @@ public class Broker
     {
         try {
             Socket s = new Socket(serverIp, serverPort);
-            String id = generateID(serverPort);
-            System.out.println("[BROKER " + id + "] connected to Router.");
+//            String id = generateID(serverPort);
 //            startTransaction(s);
 //            Scanner scan = new Scanner(new InputStreamReader(s.getInputStream()));
             File fix_message = new File("FIXMessage.txt");
@@ -43,7 +42,8 @@ public class Broker
             // ServerConnection serverConn = new ServerConnection(socket);
             BufferedReader keyBoard = new BufferedReader(new InputStreamReader(System.in));
             PrintWriter out = new PrintWriter(s.getOutputStream(), true);
-
+            String id = input.readLine();
+            System.out.println("[BROKER " + id + "] connected to Router.");
             int count = 0;
             String command = null;
 
@@ -117,40 +117,5 @@ public class Broker
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-    }
-
-    public static String generateID(int port) {
-        StringBuilder id = new StringBuilder();
-        String uniqueId = null;
-
-        switch (port) {
-            case 5000:
-                id.append("B");
-                uniqueId = numberPadding(id, nextBrokerId());
-                break;
-            case 5001:
-                id.append("M");
-                uniqueId = numberPadding(id, nextMarketId());
-            default:
-                break;
-        }
-        return uniqueId;
-//		 addTORoutingTable(uniqueId, channel);
-    }
-
-    public static String numberPadding(StringBuilder id, int count) {
-        while (id.length() + Integer.toString(count).length() < 6) {
-            id.append("0");
-        }
-        id.append(count);
-        return id.toString();
-    }
-
-    public static int nextBrokerId() {
-        return (++brokerCount);
-    }
-
-    public static int nextMarketId() {
-        return (++marketCount);
     }
 }

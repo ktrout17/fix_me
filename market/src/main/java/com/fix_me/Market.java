@@ -18,7 +18,7 @@ public class Market {
             String id = generateID(serverPort);
             System.out.println("[MARKET " + id + "] connected to Router.");
             // Scanner scan = new Scanner(new InputStreamReader(s.getInputStream()));
-            // BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));
+            BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));
             BufferedReader keyBoard = new BufferedReader(new InputStreamReader(System.in));
             PrintWriter out = new PrintWriter(s.getOutputStream(), true);
             // Boolean ifTrue = false;
@@ -27,6 +27,8 @@ public class Market {
             while (true){
 
                 // System.out.println("> ");
+                input.readLine();
+                System.out.println(input.readLine());
                 String command = keyBoard.readLine();
 
                 if (command.toLowerCase().equals("quit")) {

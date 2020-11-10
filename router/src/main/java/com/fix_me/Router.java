@@ -14,7 +14,6 @@ public class Router {
 	private static final int PORTM = 5001;
 	private static ServerSocket listener = null;
 	private static ServerSocket listenerM = null;
-	// private static ArrayList<ClientHandler> clients = new ArrayList<>();
 	private static Map<String, ClientHandler> clients = new HashMap<>();
 	private static ExecutorService pool = Executors.newFixedThreadPool(4);
 
@@ -28,31 +27,29 @@ public class Router {
 			Socket client = null;
 			Socket clientM = null;
 			ClientHandler clientThread = null;
+			System.out.println("[SERVER] is waiting for client connection.");
 			while (true) {
-				System.out.println("[SERVER] is waiting for client connection.");
 				if (clientM == null) {
 					System.out.println("Waiting for Market to connect...");
 					clientM = listenerM.accept();
-					System.out.println("[SERVER] connceted to market");
 					String id = generateID(clientM);
-					clientThread = new ClientHandler(clientM, clients);
-					// clients.add(clientThread);
+					System.out.println("[SERVER] connceted to market: "+id);
+					clientThread = new ClientHandler(id, clientM, clients);
 					addTORoutingTable(id, clientThread);
 				} else {
 					client = listener.accept();
-					System.out.println("[SERVER] connceted to client");
 					String id = generateID(client);
-					clientThread = new ClientHandler(client, clients);
-					// clients.add(clientThread);
+					System.out.println("[SERVER] connceted to broker: " + id);
+					clientThread = new ClientHandler(id, client, clients);
 					addTORoutingTable(id, clientThread);
 				}
 				pool.execute(clientThread);
 			}
 
 		} catch (IOException e) {
-			System.out.println("ERROR: IOException");
+			System.out.println("ERROR: in Router.main()1");
 		} catch (Exception e) {
-			System.out.println("ERROR: ");
+			System.out.println("ERROR: in Router.main()");
 			// TODO: handle exception
 		}
 	}
@@ -82,11 +79,9 @@ public class Router {
 			}
 		}
 		return uniqueId;
-		// addTORoutingTable(uniqueId, channel);
 	}
 
 	private static void addTORoutingTable(String id, ClientHandler channel) {
-		// TODO: change back to id, not port
 		clients.put(id, channel);
 	}
 

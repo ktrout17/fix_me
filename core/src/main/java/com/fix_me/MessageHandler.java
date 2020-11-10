@@ -1,5 +1,6 @@
 package com.fix_me;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -2,6 +2,7 @@ package com.fix_me;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Scanner;
 import java.net.Socket;
 import java.util.concurrent.TimeUnit;
@@ -10,11 +11,14 @@ public class Broker
 {
     private static final String serverIp = "127.0.0.1";
     private static final int serverPort = 5000;
+    private static int brokerCount = 0;
+    private static int marketCount = 0;
     public static void main( String[] args )
     {
         try {
             Socket s = new Socket(serverIp, serverPort);
-            System.out.println("[BROKER] connected to Router.");
+            String id = generateID(serverPort);
+            System.out.println("[BROKER " + id + "] connected to Router.");
 //            startTransaction(s);
 //            Scanner scan = new Scanner(new InputStreamReader(s.getInputStream()));
             File fix_message = new File("FIXMessage.txt");
@@ -42,19 +46,22 @@ public class Broker
 
             int count = 0;
             String command = null;
-            String serverResponse = null;
+
             // new Thread(serverConn).start();
             while (scan.hasNextLine()){
                     // System.out.println("> ");
 //                    command = keyBoard.readLine();
                 command = scan.nextLine();
-                System.out.println(command);
-                if (command.toLowerCase().equals("quit")){
-                    out.println(command);
-                        // TimeUnit.SECONDS.sleep(200);
-                    break ;
-                }
                 out.println(command);
+                Sleep(4);
+                System.out.println(command);
+//                if (command.toLowerCase().equals("quit")){
+//                    out.println(command);
+//                        // TimeUnit.SECONDS.sleep(200);
+//                    break ;
+//                }
+//                id = input.readLine();
+//                System.out.println(id);
                 // if (count == 0){
                 //     System.out.println("Waiting for Market to come online.");
                 //     count++;
@@ -64,8 +71,7 @@ public class Broker
                     // break;
                 // }
             }
-            serverResponse = input.readLine();
-            System.out.println("Server Says: "+serverResponse);
+//            System.out.println("Server Says: "+ id);
             scan.close();
                 // write.println("Hello computer");
                 s.close();
@@ -111,5 +117,40 @@ public class Broker
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public static String generateID(int port) {
+        StringBuilder id = new StringBuilder();
+        String uniqueId = null;
+
+        switch (port) {
+            case 5000:
+                id.append("B");
+                uniqueId = numberPadding(id, nextBrokerId());
+                break;
+            case 5001:
+                id.append("M");
+                uniqueId = numberPadding(id, nextMarketId());
+            default:
+                break;
+        }
+        return uniqueId;
+//		 addTORoutingTable(uniqueId, channel);
+    }
+
+    public static String numberPadding(StringBuilder id, int count) {
+        while (id.length() + Integer.toString(count).length() < 6) {
+            id.append("0");
+        }
+        id.append(count);
+        return id.toString();
+    }
+
+    public static int nextBrokerId() {
+        return (++brokerCount);
+    }
+
+    public static int nextMarketId() {
+        return (++marketCount);
     }
 }

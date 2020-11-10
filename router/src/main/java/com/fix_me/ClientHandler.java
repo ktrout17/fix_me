@@ -13,11 +13,13 @@ public class ClientHandler implements Runnable {
 	private Socket client;
 	private BufferedReader in;
 	private PrintWriter out;
-	private String id;
+	private String brokerId;
+	private String marketId;
 	// private ArrayList<ClientHandler> clients;
 	private Map<String, ClientHandler> clients;
 	// private static int broker = 0;
-	private static int market = 0;
+	private static int brokerCount = 0;
+	private static int marketCount = 0;
 
 	// public ClientHandler(Socket clientSocket, ArrayList<ClientHandler> clients)
 	// throws IOException {
@@ -32,12 +34,14 @@ public class ClientHandler implements Runnable {
 	}
 
 	public void run() {
-		id = generateID(client);
+		brokerId = Router.brokerId;
+		marketId = Router.marketId;
 		try {
 			while (true) {
 				String request = in.readLine();
+				request = "49=" + brokerId + "|56=" + marketId + request;
 				handleRequest(request);
-				out.println(id);
+
 				// if (request.contains("broker")) {
 				// // out.println( Router.getRandomName() );
 				// name = "broker";
@@ -85,18 +89,30 @@ public class ClientHandler implements Runnable {
 
 	private void handleRequest(String request) {
 		// TODO: handle FIX message
-//		ArrayList<String> FIXmessages = readFIXMsgs();
-//		clients.get("String");
 
-		String id = "Get this from the fix message MARKETID";
+		MessageHandler check = null;
+		check = new MessageHandler(request);
+		String checksum = check.CalculateChecksum(request);
+		String FIXMsg = request + "10=" + checksum + "|";
+		String id = check.getMarket();
 
 		Set<Map.Entry<String, ClientHandler>> values = clients.entrySet();
 		for (Map.Entry<String, ClientHandler> value : values) {
 			if (value.getKey().equals(id)) {
-				value.getValue().out.println(request);
+				value.getValue().out.println(FIXMsg);
 			}
 		}
+//		System.out.println(id);
+		System.out.println("FIXMsg: " + FIXMsg);
 	}
+
+//	private void getIds() {
+//		Set<Map.Entry<String, ClientHandler>> values = clients.entrySet();
+//		for (Map.Entry<String, ClientHandler> value : values) {
+//			if ()
+//			}
+//		}
+//	}
 
 	// private void quit(int market) {
 	// for (ClientHandler aClient : clients) {
@@ -142,25 +158,5 @@ public class ClientHandler implements Runnable {
 		// System.out.println(randomNumber);
 		String randomName = Products[randomNumber];
 		return randomName;
-	}
-
-	public static String generateID(Socket channel) {
-		StringBuilder id = new StringBuilder();
-		String uniqueId = null;
-
-		switch (channel.getLocalPort()) {
-			case 5000:
-				id.append("B");
-				uniqueId = Router.numberPadding(id, Router.nextBrokerId());
-				break;
-			case 5001:
-				id.append("M");
-				uniqueId = Router.numberPadding(id, Router.nextMarketId());
-			default:
-				break;
-		}
-
-		return uniqueId;
-//		 addTORoutingTable(uniqueId, channel);
 	}
 }

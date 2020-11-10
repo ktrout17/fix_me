@@ -23,6 +23,9 @@ public class Router {
 	private static int brokerCount = 0;
 	private static int marketCount = 0;
 
+	public static String brokerId;
+	public static String marketId;
+
 	public static void main(String[] args) {
 		try {
 			listener = new ServerSocket(PORT);
@@ -35,18 +38,18 @@ public class Router {
 				if (clientM == null) {
 					System.out.println("[ROUTER] Waiting for Market to connect...");
 					clientM = listenerM.accept();
-					String id = generateID(clientM);
-					System.out.println("[ROUTER] new Market (" + id + ") connected.");
+					marketId = generateID(clientM);
+					System.out.println("[ROUTER] new Market (" + marketId + ") connected.");
 					clientThread = new ClientHandler(clientM, clients);
-					addTORoutingTable(id, clientThread);
+					addTORoutingTable(marketId, clientThread);
 //					System.out.println("Map: " + clients);
 				} else {
 					System.out.println("[ROUTER] Waiting for Broker to connect...");
 					client = listener.accept();
-					String id = generateID(client);
-					System.out.println("[ROUTER] new Broker (" + id + ") connected.");
+					brokerId = generateID(client);
+					System.out.println("[ROUTER] new Broker (" + brokerId + ") connected.");
 					clientThread = new ClientHandler(client, clients);
-					addTORoutingTable(id, clientThread);
+					addTORoutingTable(brokerId, clientThread);
 //					System.out.println("Map: " + clients);
 				}
 				pool.execute(clientThread);

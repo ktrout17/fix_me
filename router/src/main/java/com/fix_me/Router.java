@@ -42,8 +42,8 @@ public class Router {
 					System.out.println("[ROUTER] new Market " + marketId + " connected.");
 					clientThread = new ClientHandler(marketId, clientM, clients);
 					addTORoutingTable(marketId, clientThread);
-				} else {
 					System.out.println("[ROUTER] Waiting for a Broker to connect...");
+				} else {
 					client = listener.accept();
 					brokerId = generateID(client);
 //					String id = generateID(clientM);
@@ -58,7 +58,6 @@ public class Router {
 			System.out.println("ERROR: IOException");
 		} catch (Exception e) {
 			System.out.println("ERROR: Exception");
-			// TODO: handle exception
 		}
 	}
 
@@ -90,7 +89,6 @@ public class Router {
 	}
 
 	private static void addTORoutingTable(String id, ClientHandler channel) {
-		// TODO: change back to id, not port
 		clients.put(id, channel);
 	}
 

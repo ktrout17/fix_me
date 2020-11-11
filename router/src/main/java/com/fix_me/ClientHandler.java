@@ -37,10 +37,9 @@ public class ClientHandler implements Runnable {
 			while (true) {
 				out.println(brokerId);
 				String request = in.readLine();
-				request = "49=" + brokerId + "|56=" + marketId + request;
-				handleRequest(request);
-				if (!client.isConnected()) {
-					System.out.println("[ROUTER] "+ id +": closed");
+				if (!request.equals(null)) {
+					request = "49=" + brokerId + "|56=" + marketId + request;
+					handleRequest(request);
 				}
 			}
 		} catch (NullPointerException e) {
@@ -62,7 +61,7 @@ public class ClientHandler implements Runnable {
 		for (Map.Entry<String, ClientHandler> value : values) {
 			if (value.getKey().equals(id)) {
 				if (validateMsg(FIXMsg)) {
-					System.out.println("Checksum validated.");
+//					System.out.println("Checksum validated.");
 				}
 				else {
 					System.out.println("Unable to validate Checksum - Please check transaction.");
@@ -92,7 +91,7 @@ public class ClientHandler implements Runnable {
 			in.close();
 			out.close();
 			client.close();
-			System.out.println("[SERVER] Connection Closing...");
+			System.out.println("[ROUTER] Connection Closing...");
 		} catch (IOException e) {
 			System.err.println("Failed to close connections");
 			System.exit(1);

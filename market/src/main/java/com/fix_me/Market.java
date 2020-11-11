@@ -20,22 +20,22 @@ public class Market {
     {
         initializeConnections();
         String msg = null;
-
+        int count = 0;
         try {
             while (true){
                 msg = in.readLine();
-                System.out.println("[MARKET] Request from Broker: " + msg);
 
-                if (msg.toLowerCase().equals("quit")) {
-					break ;
-				}
-//				out.println(msg);
-                msg = null;
-
-
+                if (count > 0 && !msg.equals(null))
+                    System.out.println("[MARKET] Request from Broker: " + msg);
+                else
+                    count++;
             }
+//            closeConnections();
+        }catch (NullPointerException e) {
+            System.err.println("Lost connection to server.");
             closeConnections();
-        } catch( IOException e){
+        }
+        catch( IOException e){
             System.err.println("Failed to read input stream");
             closeConnections();
             System.exit(1);

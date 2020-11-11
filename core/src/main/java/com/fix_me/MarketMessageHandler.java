@@ -76,7 +76,7 @@ public class MarketMessageHandler {
 
             if (checksum == 0)
                 parseMessage();
-            System.out.println("fix message checksum " + checksum);
+//            System.out.println("fix message checksum " + checksum);
 
             if (checksum == (sum % 256))
                 return true;

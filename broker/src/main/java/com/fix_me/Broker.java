@@ -25,15 +25,14 @@ public class Broker
             String msg = null;
             while (true) {
                 if (!scan.hasNextLine()) {
-                    out.println("quit");
                     break;
                 }
                 Sleep(2);
                 msg = scan.nextLine();
                 out.println(msg);
-                System.out.println("Request:" + msg);
+                System.out.println("[BROKER] sending to Market: " + msg);
             }
-        closeConnections();
+            closeConnections();
     }
 
     private static void initializeConnections() {

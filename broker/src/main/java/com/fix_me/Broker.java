@@ -1,8 +1,6 @@
 package com.fix_me;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Map;
 import java.util.Scanner;
 import java.net.Socket;
 import java.util.concurrent.TimeUnit;
@@ -11,104 +9,78 @@ public class Broker
 {
     private static final String serverIp = "127.0.0.1";
     private static final int serverPort = 5000;
-    private static int brokerCount = 0;
-    private static int marketCount = 0;
+    private static BufferedReader in = null;
+    private static PrintWriter out = null;
+    private static Socket socket = null;
+    private static Scanner scan = null;
+
     public static void main( String[] args )
     {
+            initializeConnections();
+            scan = readFile();
+            if (scan == null) {
+                System.err.println("Was unable to read file.");
+                System.exit(1);
+            }
+            String msg = null;
+            while (true) {
+                if (!scan.hasNextLine()) {
+                    out.println("quit");
+                    break;
+                }
+                Sleep(2);
+                msg = scan.nextLine();
+                out.println(msg);
+                System.out.println("Request:" + msg);
+            }
+        closeConnections();
+    }
+
+    private static void initializeConnections() {
         try {
-            Socket s = new Socket(serverIp, serverPort);
-//            String id = generateID(serverPort);
-//            startTransaction(s);
-//            Scanner scan = new Scanner(new InputStreamReader(s.getInputStream()));
+            socket = new Socket(serverIp, serverPort);
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            out = new PrintWriter(socket.getOutputStream(), true);
+            String id = in.readLine();
+            System.out.println("[BROKER " + id + "] connected to Router.");
+        } catch (IOException e) {
+            System.err.println("Failed to create connection");
+            System.exit(1);
+        } catch (Exception e) {
+            System.err.println("ERROR: " + e.getLocalizedMessage());
+            System.exit(1);
+        }
+    }
+
+    private static void closeConnections() {
+        try {
+            scan.close();
+            socket.close();
+            System.out.println("Broker connection Closing...");
+        } catch (IOException e) {
+            System.err.println("Failed to close connections");
+            System.exit(1);
+        }
+    }
+
+    private static Scanner readFile() {
+        try {
             File fix_message = new File("FIXMessage.txt");
-            Scanner scan  = new Scanner(fix_message);
             Boolean exists = fix_message.exists();
-            if (!exists){
-                System.out.println("File does not exist, Creating file.");
+            if (!exists) {
+                System.out.println("File does not exist - Creating file.");
                 fix_message.createNewFile();
             }
-//             String messageContent = null;
-//             while(scan.hasNextLine())
-//             {
-//                 messageContent = scan.nextLine();
-//                 System.out.println(messageContent);
-//
-//             }
-//             String[] newString = messageContent.split(" ", 0);
-//             System.out.println(newString[0]);
-//             System.out.println(newString[1]);
-
-            BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));
-            // ServerConnection serverConn = new ServerConnection(socket);
-            BufferedReader keyBoard = new BufferedReader(new InputStreamReader(System.in));
-            PrintWriter out = new PrintWriter(s.getOutputStream(), true);
-            String id = input.readLine();
-            System.out.println("[BROKER " + id + "] connected to Router.");
-            int count = 0;
-            String command = null;
-
-            // new Thread(serverConn).start();
-            while (scan.hasNextLine()){
-                    // System.out.println("> ");
-//                    command = keyBoard.readLine();
-                command = scan.nextLine();
-                out.println(command);
-                Sleep(4);
-                System.out.println(command);
-//                if (command.toLowerCase().equals("quit")){
-//                    out.println(command);
-//                        // TimeUnit.SECONDS.sleep(200);
-//                    break ;
-//                }
-//                id = input.readLine();
-//                System.out.println(id);
-                // if (count == 0){
-                //     System.out.println("Waiting for Market to come online.");
-                //     count++;
-                // }
-                // while (serverResponse.equals(null)){
-                    // if (serverResponse.equals("market is online"))
-                    // break;
-                // }
-            }
-//            System.out.println("Server Says: "+ id);
-            scan.close();
-                // write.println("Hello computer");
-                s.close();
-            // System.exit(0);
-        } catch( IOException e){
-            System.out.println("ERROR: "+e);
-        } catch (Exception e) {
-            System.out.println("ERROR: "+e);
-            //TODO: handle exception
-        }
-    }
-
-//    public static void startTransaction(Socket s) {
-//        ArrayList<String> FIXMessages = readFIXMsgs();
-//        MessageHandler check;
-//        for (int i = 0; i < FIXMessages.size(); i++) {
-//            check = new MessageHandler(FIXMessages.get(i));
-//            printMsg(FIXMessages.get(i) + "|10=" + check.CalculateChecksum(FIXMessages.get(i)));
-//            Sleep(4);
-//        }
-//    }
-
-    private static ArrayList<String> readFIXMsgs() {
-        ArrayList<String> FIXMsgs = new ArrayList<>();
-
-        try (BufferedReader br = new BufferedReader((new FileReader("FIXMessage.txt")))) {
-            while (br.ready()) {
-                FIXMsgs.add((br.readLine()));
-            }
+            Scanner scan = new Scanner(fix_message);
+            return scan;
+        } catch (FileNotFoundException e) {
+            System.err.println("File not found!");
+            System.exit(1);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Failed to create file.");
+            System.exit(1);
         }
-        return FIXMsgs;
-    }
-
-    public static void printMsg(String message) {
-        System.out.println("[BROKER] " + message);
+        return null;
     }
 
     private static void Sleep(long time) {

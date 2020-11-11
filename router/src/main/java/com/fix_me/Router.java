@@ -16,7 +16,6 @@ public class Router {
 	private static final int PORTM = 5001;
 	private static ServerSocket listener = null;
 	private static ServerSocket listenerM = null;
-	// private static ArrayList<ClientHandler> clients = new ArrayList<>();
 	private static final Map<String, ClientHandler> clients = new HashMap<>();
 	private static final ExecutorService pool = Executors.newFixedThreadPool(4);
 
@@ -39,18 +38,18 @@ public class Router {
 					System.out.println("[ROUTER] Waiting for Market to connect...");
 					clientM = listenerM.accept();
 					marketId = generateID(clientM);
-					System.out.println("[ROUTER] new Market (" + marketId + ") connected.");
-					clientThread = new ClientHandler(clientM, clients);
+//					String id = generateID(clientM);
+					System.out.println("[ROUTER] new Market " + marketId + " connected.");
+					clientThread = new ClientHandler(marketId, clientM, clients);
 					addTORoutingTable(marketId, clientThread);
-					System.out.println("[ROUTER] Waiting for Broker to connect...");
-//					System.out.println("Map: " + clients);
 				} else {
+					System.out.println("[ROUTER] Waiting for a Broker to connect...");
 					client = listener.accept();
 					brokerId = generateID(client);
-					System.out.println("[ROUTER] new Broker (" + brokerId + ") connected.");
-					clientThread = new ClientHandler(client, clients);
+//					String id = generateID(clientM);
+					System.out.println("[ROUTER] new Broker " + brokerId + " connected.");
+					clientThread = new ClientHandler(brokerId, client, clients);
 					addTORoutingTable(brokerId, clientThread);
-//					System.out.println("Map: " + clients);
 				}
 				pool.execute(clientThread);
 			}
@@ -88,7 +87,6 @@ public class Router {
 			}
 		}
 		return uniqueId;
-//		 addTORoutingTable(uniqueId, channel);
 	}
 
 	private static void addTORoutingTable(String id, ClientHandler channel) {

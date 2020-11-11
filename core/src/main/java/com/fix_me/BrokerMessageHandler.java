@@ -3,7 +3,7 @@ package com.fix_me;
 import lombok.Getter;
 import lombok.Setter;
 
-public class MessageHandler {
+public class BrokerMessageHandler {
     private final int routerSenderIDTag = 49;
     private final int marketTag = 56;
     private final int sideTag = 54;
@@ -26,7 +26,7 @@ public class MessageHandler {
 
     private @Getter String message;
 
-    public MessageHandler(String message) {
+    public BrokerMessageHandler(String message) {
         this.message = message;
         this.analyzeMsg();
     }

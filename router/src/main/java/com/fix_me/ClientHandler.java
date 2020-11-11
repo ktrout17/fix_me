@@ -3,7 +3,6 @@ package com.fix_me;
 import java.io.*;
 import java.net.Socket;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.lang.NullPointerException;
 
@@ -41,9 +40,8 @@ public class ClientHandler implements Runnable {
 				request = "49=" + brokerId + "|56=" + marketId + request;
 				handleRequest(request);
 				if (!client.isConnected()) {
-					System.out.println("[ROUTER] "+id+": closed");
+					System.out.println("[ROUTER] "+ id +": closed");
 				}
-
 			}
 		} catch (NullPointerException e) {
 			closeConnections();
@@ -54,8 +52,8 @@ public class ClientHandler implements Runnable {
 
 	private void handleRequest(String request) {
 
-		MessageHandler check = null;
-		check = new MessageHandler(request);
+		BrokerMessageHandler check = null;
+		check = new BrokerMessageHandler(request);
 		String checksum = check.CalculateChecksum(request);
 		String FIXMsg = request + "10=" + checksum + "|";
 		String id = check.getMarket();
@@ -63,10 +61,24 @@ public class ClientHandler implements Runnable {
 		Set<Map.Entry<String, ClientHandler>> values = clients.entrySet();
 		for (Map.Entry<String, ClientHandler> value : values) {
 			if (value.getKey().equals(id)) {
+				if (validateMsg(FIXMsg)) {
+					System.out.println("Checksum validated.");
+				}
+				else {
+					System.out.println("Unable to validate Checksum - Please check transaction.");
+				}
 				value.getValue().out.println(FIXMsg);
 			}
 		}
 		System.out.println("[ROUTER] Received from Broker: " + FIXMsg);
+	}
+
+	private Boolean validateMsg(String request) {
+		MarketMessageHandler validate = null;
+		validate = new MarketMessageHandler(request);
+		Boolean validateChecksum = validate.validateChecksum();
+
+		return validateChecksum;
 	}
 
 	private void closeConnections() {

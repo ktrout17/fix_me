@@ -39,7 +39,7 @@ public class Router {
 					clientM = listenerM.accept();
 					marketId = generateID(clientM);
 //					String id = generateID(clientM);
-					System.out.println("[ROUTER] new Market " + marketId + " connected.");
+					System.out.println("[ROUTER] New Market " + marketId + " connected.");
 					clientThread = new ClientHandler(marketId, clientM, clients);
 					addTORoutingTable(marketId, clientThread);
 					System.out.println("[ROUTER] Waiting for a Broker to connect...");
@@ -47,7 +47,7 @@ public class Router {
 					client = listener.accept();
 					brokerId = generateID(client);
 //					String id = generateID(clientM);
-					System.out.println("[ROUTER] new Broker " + brokerId + " connected.");
+					System.out.println("[ROUTER] New Broker " + brokerId + " connected.");
 					clientThread = new ClientHandler(brokerId, client, clients);
 					addTORoutingTable(brokerId, clientThread);
 				}

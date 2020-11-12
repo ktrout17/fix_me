@@ -13,6 +13,7 @@ public class Broker
     private static PrintWriter out = null;
     private static Socket socket = null;
     private static Scanner scan = null;
+    private static String brokerId;
 
     public static void main( String[] args )
     {
@@ -30,8 +31,25 @@ public class Broker
                 Sleep(2);
                 msg = scan.nextLine();
                 out.println(msg);
-                System.out.println("[BROKER] sending to Market: " + msg);
+                String fullRequest = constructFIXmsg(msg);
+                System.out.println("[BROKER] sending to Market: " + fullRequest);
             }
+
+//            String responses = null;
+//
+//            try {
+//                while (true) {
+//                    responses = in.readLine();
+//                    System.out.println("[BROKER] response from Market: " + responses);
+//                }
+//            } catch (NullPointerException e) {
+//                System.err.println("Lost connection to server.");
+//                closeConnections();
+//            } catch( IOException e){
+//                System.err.println("Failed to read input stream");
+//                closeConnections();
+//                System.exit(1);
+//            }
             closeConnections();
     }
 
@@ -40,8 +58,8 @@ public class Broker
             socket = new Socket(serverIp, serverPort);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(), true);
-            String id = in.readLine();
-            System.out.println("[BROKER " + id + "] connected to Router.");
+            brokerId = in.readLine();
+            System.out.println("[BROKER " + brokerId + "] connected to Router.");
         } catch (IOException e) {
             System.err.println("Failed to create connection");
             System.exit(1);
@@ -55,7 +73,9 @@ public class Broker
         try {
             scan.close();
             socket.close();
-            System.out.println("Broker connection Closing...");
+            System.out.println("Broker disconnecting..");
+            Sleep(1);
+            System.out.println("Broker disconnected.");
         } catch (IOException e) {
             System.err.println("Failed to close connections");
             System.exit(1);
@@ -88,5 +108,20 @@ public class Broker
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    private static String addChecksum(String message) {
+        BrokerMessageHandler check = new BrokerMessageHandler(message);
+        String checksum = check.CalculateChecksum(message);
+        return checksum;
+    }
+
+    private static String constructFIXmsg(String message) {
+        String marketId = "|56=M00001";
+        String brokerString = "49=" + brokerId;
+        String fullMessage = brokerString + marketId + message;
+        String checksum = addChecksum(fullMessage);
+        String FIXmsg = fullMessage + "10=" + checksum;
+        return FIXmsg;
     }
 }

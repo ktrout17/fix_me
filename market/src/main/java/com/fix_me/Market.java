@@ -1,10 +1,9 @@
 package com.fix_me;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.Socket;
-import java.io.PrintWriter;
-import java.io.BufferedReader;
+import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 public class Market {
     private static final String serverIp = "127.0.0.1";
@@ -12,6 +11,8 @@ public class Market {
     private static BufferedReader in = null;
     private static PrintWriter out = null;
     private static Socket socket = null;
+    private static Scanner scan = null;
+    private static String responses = null;
 
     private static int brokerCount = 0;
     private static int marketCount = 0;
@@ -20,6 +21,7 @@ public class Market {
     {
         initializeConnections();
         String msg = null;
+
         int count = 0;
         try {
             while (true){
@@ -31,15 +33,15 @@ public class Market {
                     count++;
             }
 //            closeConnections();
-        }catch (NullPointerException e) {
+        } catch (NullPointerException e) {
             System.err.println("Lost connection to server.");
             closeConnections();
-        }
-        catch( IOException e){
+        } catch( IOException e){
             System.err.println("Failed to read input stream");
             closeConnections();
             System.exit(1);
         }
+//        sendResponses();
     }
 
     private static void initializeConnections() {
@@ -90,6 +92,52 @@ public class Market {
 
     public static int nextMarketId() {
         return (++marketCount);
+    }
+
+    private static Scanner readFile() {
+        try {
+            File fix_message = new File("MarketResponses.txt");
+            Boolean exists = fix_message.exists();
+            if (!exists) {
+                System.out.println("File does not exist - Creating file.");
+                fix_message.createNewFile();
+            }
+            Scanner scan = new Scanner(fix_message);
+            return scan;
+        } catch (FileNotFoundException e) {
+            System.err.println("File not found!");
+            System.exit(1);
+        } catch (IOException e) {
+            System.err.println("Failed to create file.");
+            System.exit(1);
+        }
+        return null;
+    }
+
+    private static void Sleep(long time) {
+        try {
+            TimeUnit.SECONDS.sleep(time);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void sendResponses() {
+        scan = readFile();
+        System.out.println("test");
+        if (scan == null) {
+            System.err.println("Was unable to read file.");
+            System.exit(1);
+        }
+        while (true) {
+            if (!scan.hasNextLine()) {
+                break;
+            }
+            Sleep(2);
+            responses = scan.nextLine();
+            out.println(responses);
+            System.out.println("[MARKET] responding to Broker: " + responses);
+        }
     }
 
     private static void closeConnections() {

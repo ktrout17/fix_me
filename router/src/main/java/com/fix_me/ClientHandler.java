@@ -5,6 +5,7 @@ import java.net.Socket;
 import java.util.Map;
 import java.util.Set;
 import java.lang.NullPointerException;
+import java.util.concurrent.TimeUnit;
 
 public class ClientHandler implements Runnable {
 	private Socket client;
@@ -91,10 +92,20 @@ public class ClientHandler implements Runnable {
 			in.close();
 			out.close();
 			client.close();
-			System.out.println("[ROUTER] Connection Closing...");
+			System.out.println("[ROUTER] Broker " + brokerId + " disconnecting...");
+			Sleep(1);
+			System.out.println("[ROUTER] Broker " + brokerId + " has disconnected.");
 		} catch (IOException e) {
 			System.err.println("Failed to close connections");
 			System.exit(1);
+		}
+	}
+
+	private static void Sleep(long time) {
+		try {
+			TimeUnit.SECONDS.sleep(time);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 	}
 }

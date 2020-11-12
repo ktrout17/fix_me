@@ -30,9 +30,9 @@ public class Broker
                 }
                 Sleep(2);
                 msg = scan.nextLine();
-                out.println(msg);
                 String fullRequest = constructFIXmsg(msg);
-                System.out.println("[BROKER] sending to Market: " + fullRequest);
+                out.println(fullRequest);
+                System.out.println("[BROKER " + brokerId + "] sending to Market: " + fullRequest);
             }
 
 //            String responses = null;
@@ -73,9 +73,9 @@ public class Broker
         try {
             scan.close();
             socket.close();
-            System.out.println("Broker disconnecting..");
+            System.out.println("[BROKER " + brokerId + "] disconnecting..");
             Sleep(1);
-            System.out.println("Broker disconnected.");
+            System.out.println("[BROKER " + brokerId + "] disconnected.");
         } catch (IOException e) {
             System.err.println("Failed to close connections");
             System.exit(1);
@@ -121,7 +121,7 @@ public class Broker
         String brokerString = "49=" + brokerId;
         String fullMessage = brokerString + marketId + message;
         String checksum = addChecksum(fullMessage);
-        String FIXmsg = fullMessage + "10=" + checksum;
+        String FIXmsg = fullMessage + "10=" + checksum + "|";
         return FIXmsg;
     }
 }

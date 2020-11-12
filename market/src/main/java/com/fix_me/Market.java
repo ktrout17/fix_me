@@ -13,6 +13,7 @@ public class Market {
     private static Socket socket = null;
     private static Scanner scan = null;
     private static String responses = null;
+    private static String marketId;
 
     private static int brokerCount = 0;
     private static int marketCount = 0;
@@ -28,7 +29,7 @@ public class Market {
                 msg = in.readLine();
 
                 if (count > 0 && !msg.equals(null))
-                    System.out.println("[MARKET] Request from Broker: " + msg);
+                    System.out.println("[MARKET " + marketId + "] Request from Broker: " + msg);
                 else
                     count++;
             }
@@ -49,8 +50,8 @@ public class Market {
             socket = new Socket(serverIp, serverPort);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(), true);
-            String id = generateID(serverPort);
-            System.out.println("[MARKET " + id + "] connected to Router.");
+            marketId = generateID(serverPort);
+            System.out.println("[MARKET " + marketId + "] connected to Router.");
         } catch (IOException e) {
             System.err.println("Failed to create connection");
             System.exit(1);

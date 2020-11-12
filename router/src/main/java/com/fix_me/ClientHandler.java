@@ -39,7 +39,7 @@ public class ClientHandler implements Runnable {
 				out.println(brokerId);
 				String request = in.readLine();
 				if (!request.equals(null)) {
-					request = "49=" + brokerId + "|56=" + marketId + request;
+//					request = "49=" + brokerId + "|56=" + marketId + request;
 					handleRequest(request);
 				}
 			}
@@ -52,30 +52,19 @@ public class ClientHandler implements Runnable {
 
 	private void handleRequest(String request) {
 
-		BrokerMessageHandler check = null;
-		check = new BrokerMessageHandler(request);
-		String checksum = check.CalculateChecksum(request);
-		String FIXMsg = request + "10=" + checksum + "|";
+		BrokerMessageHandler check = new BrokerMessageHandler(request);
 		String id = check.getMarket();
 
 		Set<Map.Entry<String, ClientHandler>> values = clients.entrySet();
 		for (Map.Entry<String, ClientHandler> value : values) {
-			if (value.getKey().equals(id)) {
-				if (validateMsg(FIXMsg)) {
-//					System.out.println("Checksum validated.");
-				}
-				else {
-					System.out.println("Unable to validate Checksum - Please check transaction.");
-				}
-				value.getValue().out.println(FIXMsg);
-			}
+			if (value.getKey().equals(id) && validateMsg(request))
+				value.getValue().out.println(request);
 		}
-		System.out.println("[ROUTER] Received from Broker: " + FIXMsg);
+		System.out.println("[ROUTER] Received from Broker: " + request);
 	}
 
 	private Boolean validateMsg(String request) {
-		MarketMessageHandler validate = null;
-		validate = new MarketMessageHandler(request);
+		MarketMessageHandler validate = new MarketMessageHandler(request);
 		Boolean validateChecksum = validate.validateChecksum();
 
 		return validateChecksum;

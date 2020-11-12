@@ -33,7 +33,7 @@ public class Market {
                 if (count > 0 && !msg.equals(null)) {
                     System.out.println("[MARKET " + marketId + "] Request from Broker: " + msg);
                     getBrokerId(msg);
-                    sendResponses();
+//                    sendResponses();
                 }
                 else
                     count++;
@@ -167,7 +167,7 @@ public class Market {
     }
 
     private static String constructFIXmsg(String responses) {
-        String fullResponse = "56=" + brokerId + "|49=" + marketId + responses;
+        String fullResponse = "49=" + brokerId + "|56=" + marketId + responses;
         String checksum = getChecksum(fullResponse);
         String FIXMsg = fullResponse + "10=" + checksum + "|";
         return FIXMsg;

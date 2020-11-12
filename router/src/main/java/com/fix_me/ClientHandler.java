@@ -23,10 +23,6 @@ public class ClientHandler implements Runnable {
 //	private Socket marketSocket;
 
 	public ClientHandler(String id, Socket clientSocket, Map<String, ClientHandler> clients) {
-//		if (clientSocket.getLocalPort() == 5000)
-//			this.brokerSocket = clientSocket;
-//		if (clientSocket.getLocalPort() == 5001)
-//			this.marketSocket = clientSocket;
 		this.client = clientSocket;
 		this.clients = clients;
 		this.id = id;
@@ -45,16 +41,14 @@ public class ClientHandler implements Runnable {
 		brokerId = Router.brokerId;
 		marketId = Router.marketId;
 		try {
-//			brokerIn = new BufferedReader(new InputStreamReader(brokerSocket.getInputStream()));
-//			brokerOut = new PrintWriter(brokerSocket.getOutputStream(), true);
-//			marketIn = new BufferedReader(new InputStreamReader(marketSocket.getInputStream()));
-//			marketOut = new PrintWriter(marketSocket.getOutputStream(), true);
 			while (true) {
 				out.println(brokerId);
-				String request = in.readLine();
-				if (!request.equals(null)) {
-					handleRequest(request);
+				String message = in.readLine();
+				if (!message.equals(null)) {
+					handleRequest(message);
 				}
+				if (message.contains("39=") && !message.equals(null))
+					handleResponse(message);
 			}
 		} catch (NullPointerException e) {
 			closeConnections();
@@ -66,20 +60,26 @@ public class ClientHandler implements Runnable {
 	private void handleRequest(String request) {
 
 		BrokerMessageHandler check = new BrokerMessageHandler(request);
-		String idM = check.getMarket();
-		String idB = check.getRouterSenderID();
+		String idM = check.getRouterReceiverID();
 
 		Set<Map.Entry<String, ClientHandler>> values = clients.entrySet();
 		for (Map.Entry<String, ClientHandler> value : values) {
 			if (value.getKey().equals(idM) && validateMsg(request))
 				value.getValue().out.println(request);
-			if (value.getKey().equals(idB) && validateMsg(request))
-				value.getValue().out.println(request);
 		}
-		if (request.contains("39="))
-			System.out.println("[ROUTER] Response from Market: " + request);
-		else
-			System.out.println("[ROUTER] Received from Broker: " + request);
+		System.out.println("[ROUTER] Received from Broker: " + request);
+	}
+
+	private void handleResponse(String response) {
+		BrokerMessageHandler check = new BrokerMessageHandler(response);
+		String idB = check.getRouterSenderID();
+
+		Set<Map.Entry<String, ClientHandler>> values = clients.entrySet();
+		for (Map.Entry<String, ClientHandler> value : values) {
+			if (value.getKey().equals(idB) && validateMsg(response))
+				value.getValue().out.println(response);
+		}
+		System.out.println("[ROUTER] Response from Market: " + response);
 	}
 
 	private Boolean validateMsg(String request) {

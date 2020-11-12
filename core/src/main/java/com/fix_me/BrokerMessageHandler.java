@@ -5,7 +5,7 @@ import lombok.Setter;
 
 public class BrokerMessageHandler {
     private final int routerSenderIDTag = 49;
-    private final int marketTag = 56;
+    private final int routerReceiverIDTag = 56;
     private final int sideTag = 54;
     private final int symbolTag = 55;
     private final int priceTag = 44;
@@ -15,7 +15,7 @@ public class BrokerMessageHandler {
 
     public @Getter @Setter
     String routerSenderID;
-    private @Getter @Setter String market;
+    private @Getter @Setter String routerReceiverID;
     private @Getter @Setter String side;
     private @Getter @Setter
     String symbol;
@@ -40,7 +40,7 @@ public class BrokerMessageHandler {
                     routerSenderID = splitTags[1];
                     break;
                 case "56":
-                    market = splitTags[1];
+                    routerReceiverID = splitTags[1];
                     break;
                 case "54":
                     side = splitTags[1];

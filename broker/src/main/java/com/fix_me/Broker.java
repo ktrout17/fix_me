@@ -33,6 +33,7 @@ public class Broker
                 String fullRequest = constructFIXmsg(msg);
                 out.println(fullRequest);
                 System.out.println("[BROKER " + brokerId + "] sending to Market: " + fullRequest);
+//                receiveResponses();
             }
             closeConnections();
     }
@@ -107,5 +108,19 @@ public class Broker
         String checksum = addChecksum(fullMessage);
         String FIXmsg = fullMessage + "10=" + checksum + "|";
         return FIXmsg;
+    }
+
+    private static void receiveResponses() {
+        try {
+            String response = in.readLine();
+            if (!response.equals(null)) {
+                System.out.println("[BROKER " + brokerId + "] response from Market " + response);
+            }
+        } catch( IOException e){
+            System.err.println("Failed to read input stream");
+            e.printStackTrace();
+            closeConnections();
+            System.exit(1);
+        }
     }
 }

@@ -82,5 +82,35 @@ public class BrokerMessageHandler {
             checksum = "0" + checksum;
         }
         return checksum;
-    }
+	}
+	
+	public boolean validateChecksum() {
+		String[] splitMessage = message.split("\\|");
+
+		if (splitMessage.length > 3) {
+			// add 1 for end pipe
+			int len_checksum = splitMessage[splitMessage.length - 1].length() + 1;
+
+			String chkmessage = message.substring(0, message.length() - len_checksum);
+			chkmessage = chkmessage.replace('|', '\u0001');
+
+			int sum = 0;
+			int char_val = 0;
+
+			for (int i = 0; i < chkmessage.length(); i++) {
+				char_val = chkmessage.charAt(i);
+				sum = sum + char_val;
+			}
+
+			if (Integer.parseInt(checksum) == 0)
+				analyzeMsg();
+			// System.out.println("fix message checksum " + checksum);
+
+			if (Integer.parseInt(checksum) == (sum % 256))
+				return true;
+			else
+				return false;
+		}
+		return false;
+	}
 }

@@ -6,4 +6,5 @@ router/target
 core/target
 .project
 .classpath
+.factorypath
 org.eclipse.*

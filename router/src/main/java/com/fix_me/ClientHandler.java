@@ -11,12 +11,22 @@ public class ClientHandler implements Runnable {
 	private Socket client;
 	private BufferedReader in;
 	private PrintWriter out;
+//	private BufferedReader brokerIn;
+//	private BufferedReader marketIn;
+//	private PrintWriter brokerOut;
+//	private PrintWriter marketOut;
 	private String brokerId;
 	private String marketId;
 	private Map<String, ClientHandler> clients;
 	private String id = null;
+//	private Socket brokerSocket;
+//	private Socket marketSocket;
 
 	public ClientHandler(String id, Socket clientSocket, Map<String, ClientHandler> clients) {
+//		if (clientSocket.getLocalPort() == 5000)
+//			this.brokerSocket = clientSocket;
+//		if (clientSocket.getLocalPort() == 5001)
+//			this.marketSocket = clientSocket;
 		this.client = clientSocket;
 		this.clients = clients;
 		this.id = id;
@@ -35,11 +45,14 @@ public class ClientHandler implements Runnable {
 		brokerId = Router.brokerId;
 		marketId = Router.marketId;
 		try {
+//			brokerIn = new BufferedReader(new InputStreamReader(brokerSocket.getInputStream()));
+//			brokerOut = new PrintWriter(brokerSocket.getOutputStream(), true);
+//			marketIn = new BufferedReader(new InputStreamReader(marketSocket.getInputStream()));
+//			marketOut = new PrintWriter(marketSocket.getOutputStream(), true);
 			while (true) {
 				out.println(brokerId);
 				String request = in.readLine();
 				if (!request.equals(null)) {
-//					request = "49=" + brokerId + "|56=" + marketId + request;
 					handleRequest(request);
 				}
 			}
@@ -53,14 +66,20 @@ public class ClientHandler implements Runnable {
 	private void handleRequest(String request) {
 
 		BrokerMessageHandler check = new BrokerMessageHandler(request);
-		String id = check.getMarket();
+		String idM = check.getMarket();
+		String idB = check.getRouterSenderID();
 
 		Set<Map.Entry<String, ClientHandler>> values = clients.entrySet();
 		for (Map.Entry<String, ClientHandler> value : values) {
-			if (value.getKey().equals(id) && validateMsg(request))
+			if (value.getKey().equals(idM) && validateMsg(request))
+				value.getValue().out.println(request);
+			if (value.getKey().equals(idB) && validateMsg(request))
 				value.getValue().out.println(request);
 		}
-		System.out.println("[ROUTER] Received from Broker: " + request);
+		if (request.contains("39="))
+			System.out.println("[ROUTER] Response from Market: " + request);
+		else
+			System.out.println("[ROUTER] Received from Broker: " + request);
 	}
 
 	private Boolean validateMsg(String request) {

@@ -2,6 +2,7 @@ package com.fix_me;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
@@ -14,6 +15,7 @@ public class Market {
     private static Scanner scan = null;
     private static String responses = null;
     private static String marketId;
+    private static String brokerId;
 
     private static int brokerCount = 0;
     private static int marketCount = 0;
@@ -21,28 +23,32 @@ public class Market {
     public static void main( String[] args )
     {
         initializeConnections();
-        String msg = null;
 
+        String msg = null;
         int count = 0;
         try {
             while (true){
                 msg = in.readLine();
 
-                if (count > 0 && !msg.equals(null))
+                if (count > 0 && !msg.equals(null)) {
                     System.out.println("[MARKET " + marketId + "] Request from Broker: " + msg);
+                    getBrokerId(msg);
+                    sendResponses();
+                }
                 else
                     count++;
             }
 //            closeConnections();
         } catch (NullPointerException e) {
             System.err.println("Lost connection to server.");
+            e.printStackTrace();
             closeConnections();
         } catch( IOException e){
             System.err.println("Failed to read input stream");
+            e.printStackTrace();
             closeConnections();
             System.exit(1);
         }
-//        sendResponses();
     }
 
     private static void initializeConnections() {
@@ -125,7 +131,6 @@ public class Market {
 
     private static void sendResponses() {
         scan = readFile();
-        System.out.println("test");
         if (scan == null) {
             System.err.println("Was unable to read file.");
             System.exit(1);
@@ -136,15 +141,42 @@ public class Market {
             }
             Sleep(2);
             responses = scan.nextLine();
-            out.println(responses);
-            System.out.println("[MARKET] responding to Broker: " + responses);
+            String FIXMsg = constructFIXmsg(responses);
+//            String status = getStatus(FIXMsg);
+            out.println(FIXMsg);
+            System.out.println("[MARKET " + marketId + "] responding to Broker: " + FIXMsg);
         }
+    }
+
+    private static void getBrokerId(String request) {
+
+        BrokerMessageHandler check = new BrokerMessageHandler(request);
+        brokerId = check.getRouterSenderID();
+    }
+
+    private static String getChecksum(String response) {
+        BrokerMessageHandler check = new BrokerMessageHandler(response);
+        String checksum = check.CalculateChecksum(response);
+        return checksum;
+    }
+
+    private static String getStatus(String response) {
+        BrokerMessageHandler check = new BrokerMessageHandler(response);
+        String status = check.getStatus();
+        return status;
+    }
+
+    private static String constructFIXmsg(String responses) {
+        String fullResponse = "56=" + brokerId + "|49=" + marketId + responses;
+        String checksum = getChecksum(fullResponse);
+        String FIXMsg = fullResponse + "10=" + checksum + "|";
+        return FIXMsg;
     }
 
     private static void closeConnections() {
         try {
             socket.close();
-            System.out.println("Market connection Closing...");
+            System.out.println("[MARKET " + marketId + "] connection Closing...");
         } catch (IOException e) {
             System.err.println("Failed to close connections");
             System.exit(1);

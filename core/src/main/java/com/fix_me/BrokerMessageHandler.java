@@ -37,7 +37,7 @@ public class BrokerMessageHandler {
             String[] splitTags = keyValue.split("=");
             switch (splitTags[0]) {
                 case "49":
-                    routerSenderID = splitTags[0];
+                    routerSenderID = splitTags[1];
                     break;
                 case "56":
                     market = splitTags[1];

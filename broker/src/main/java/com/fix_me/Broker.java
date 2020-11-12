@@ -34,22 +34,6 @@ public class Broker
                 out.println(fullRequest);
                 System.out.println("[BROKER " + brokerId + "] sending to Market: " + fullRequest);
             }
-
-//            String responses = null;
-//
-//            try {
-//                while (true) {
-//                    responses = in.readLine();
-//                    System.out.println("[BROKER] response from Market: " + responses);
-//                }
-//            } catch (NullPointerException e) {
-//                System.err.println("Lost connection to server.");
-//                closeConnections();
-//            } catch( IOException e){
-//                System.err.println("Failed to read input stream");
-//                closeConnections();
-//                System.exit(1);
-//            }
             closeConnections();
     }
 

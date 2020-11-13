@@ -102,7 +102,8 @@ public class ClientHandler implements Runnable {
 			System.out.println("[ROUTER] " + getName(id) + " " + id + " disconnecting...");
 			Sleep(1);
 			System.out.println("[ROUTER] " + getName(id) + " " + id + " has disconnected.");
-			// System.exit(1);
+			if (client.getLocalPort() == 5001)
+                System.exit(1);
 		} catch (IOException e) {
 			System.err.println("Failed to close connections");
 			System.exit(1);

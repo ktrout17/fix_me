@@ -39,7 +39,8 @@ public class Market {
 						String disconnectingID[] = msg.split(",");
 						System.out.println("[MARKET " + marketId + "] Broker " + disconnectingID[1] + " Disconnected.");
 					}else{
-						System.out.println(BROKER + "[MARKET " + marketId + "] Request from Broker: " + msg + RESET);
+						String brokerId = getBrokerMsg(msg).getRouterSenderID();
+						System.out.println(BROKER + "[MARKET " + marketId + "] Request from Broker " + brokerId + ": " + msg + RESET);
 						Sleep(1);
 						brokerMsg = getBrokerMsg(msg);
 						if (analyseMsg(brokerMsg)) {

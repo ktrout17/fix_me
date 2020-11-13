@@ -82,6 +82,9 @@ public class ClientHandler implements Runnable {
 			Iterator<Map.Entry<String, ClientHandler>> iterator = clients.entrySet().iterator();
 			while (iterator.hasNext()) {
 				Map.Entry<String, ClientHandler> entry = iterator.next();
+				if (entry.getKey().charAt(0) == 'M') {
+                    entry.getValue().out.println("close," + id);
+                }
 				if (entry.getKey().equals(id)) {
 					iterator.remove();
 				}
@@ -99,7 +102,7 @@ public class ClientHandler implements Runnable {
 			System.out.println("[ROUTER] " + getName(id) + " " + id + " disconnecting...");
 			Sleep(1);
 			System.out.println("[ROUTER] " + getName(id) + " " + id + " has disconnected.");
-			System.exit(1);
+			// System.exit(1);
 		} catch (IOException e) {
 			System.err.println("Failed to close connections");
 			System.exit(1);

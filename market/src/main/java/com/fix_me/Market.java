@@ -35,15 +35,20 @@ public class Market {
 			while (true) {
 				msg = in.readLine();
 				if (!msg.equals(null)) {
-					System.out.println(BROKER + "[MARKET " + marketId + "] Request from Broker: " + msg + RESET);
-					Sleep(1);
-					brokerMsg = getBrokerMsg(msg);
-					if (analyseMsg(brokerMsg)) {
-						//  Accept msg
-						sendResponses("|39=2|");
-					} else {
-						// Decline msg
-						sendResponses("|39=8|");
+					if (msg.contains("close")) {
+						String disconnectingID[] = msg.split(",");
+						System.out.println("[MARKET " + marketId + "] Broker " + disconnectingID[1] + " Disconnected.");
+					}else{
+						System.out.println(BROKER + "[MARKET " + marketId + "] Request from Broker: " + msg + RESET);
+						Sleep(1);
+						brokerMsg = getBrokerMsg(msg);
+						if (analyseMsg(brokerMsg)) {
+							//  Accept msg
+							sendResponses("|39=2|");
+						} else {
+							// Decline msg
+							sendResponses("|39=8|");
+						}
 					}
 				}
 			}

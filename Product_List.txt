@@ -1,4 +1,4 @@
-keyboard,200.0,14
+keyboard,200.0,2
 mouse,120.0,20
 monitor,500.0,20
 tower,300.0,20

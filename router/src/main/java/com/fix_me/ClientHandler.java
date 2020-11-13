@@ -11,19 +11,15 @@ import java.util.concurrent.TimeUnit;
 import lombok.val;
 
 public class ClientHandler implements Runnable {
+	public static final String MARKET = "\u001B[93m";
+	public static final String BROKER = "\u001B[96m";
+	public static final String RESET  = "\u001B[0m";
+
 	private Socket client;
 	private BufferedReader in;
 	private PrintWriter out;
-	// private BufferedReader brokerIn;
-	// private BufferedReader marketIn;
-	// private PrintWriter brokerOut;
-	// private PrintWriter marketOut;
-	// private String brokerId;
-	// private String marketId;
 	private Map<String, ClientHandler> clients;
 	private String id = null;
-	// private Socket brokerSocket;
-	// private Socket marketSocket;
 
 	public ClientHandler(String id, Socket clientSocket, Map<String, ClientHandler> clients) {
 		this.client = clientSocket;
@@ -65,7 +61,7 @@ public class ClientHandler implements Runnable {
 			if (value.getKey().equals(idM) && check.validateChecksum())
 				value.getValue().out.println(request);
 		}
-		System.out.println("[ROUTER] Received from " + getName(check.getRouterSenderID()) + ": " + request);
+		System.out.println(BROKER + "[ROUTER] Sending to " + getName(check.getRouterReceiverID()) + ": " + request + RESET);
 	}
 
 	private void handleResponse(String response) {
@@ -78,15 +74,8 @@ public class ClientHandler implements Runnable {
 				value.getValue().out.println(response);
 			}
 		}
-		System.out.println("[ROUTER] Response from " + getName(check.getRouterSenderID()) + ": " + response);
+		System.out.println(MARKET + "[ROUTER] Sending to " + getName(check.getRouterRecieverId()) + ": " + response + RESET);
 	}
-
-	// private Boolean validateMsg(String request) {
-	// 	MarketMessageHandler validate = new MarketMessageHandler(request);
-	// 	Boolean validateChecksum = validate.validateChecksum();
-
-	// 	return validateChecksum;
-	// }
 
 	private void closeConnections() {
 		try {
@@ -110,6 +99,7 @@ public class ClientHandler implements Runnable {
 			System.out.println("[ROUTER] " + getName(id) + " " + id + " disconnecting...");
 			Sleep(1);
 			System.out.println("[ROUTER] " + getName(id) + " " + id + " has disconnected.");
+			System.exit(1);
 		} catch (IOException e) {
 			System.err.println("Failed to close connections");
 			System.exit(1);

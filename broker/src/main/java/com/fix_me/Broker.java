@@ -6,6 +6,12 @@ import java.net.Socket;
 import java.util.concurrent.TimeUnit;
 
 public class Broker {
+	public static final String MARKET = "\u001B[93m";
+	public static final String BROKER = "\u001B[96m";
+	public static final String ACCEPT = "\u001B[32m";
+	public static final String REJECT = "\u001B[31m";
+	public static final String RESET  = "\u001B[0m";
+
 	private static final String serverIp = "127.0.0.1";
 	private static final int serverPort = 5000;
 	private static BufferedReader in = null;
@@ -29,7 +35,8 @@ public class Broker {
 			msg = scan.nextLine();
 			String fullRequest = constructFIXmsg(msg);
 			out.println(fullRequest);
-			System.out.println("[BROKER " + brokerId + "] sending to Market: " + fullRequest);
+			Sleep(1);
+			System.out.println(BROKER + "[BROKER " + brokerId + "] request to Market: " + fullRequest + RESET);
 			Sleep(2);
 			receiveResponses();
 		}
@@ -42,7 +49,7 @@ public class Broker {
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			out = new PrintWriter(socket.getOutputStream(), true);
 			brokerId = in.readLine();
-			System.out.println("[BROKER " + brokerId + "] connected to Router.");
+			System.out.println(BROKER + "[BROKER " + brokerId + "] connected to Router." + RESET);
 		} catch (IOException e) {
 			System.err.println("Failed to create connection");
 			System.exit(1);
@@ -112,7 +119,12 @@ public class Broker {
 		try {
 			String response = in.readLine();
 			if (!response.equals(null)) {
-				System.out.println("[BROKER " + brokerId + "] response from Market " + response);
+				System.out.println(MARKET + "[BROKER " + brokerId + "] response from Market " + response + RESET);
+				if (response.contains("39=2"))
+					System.out.println(ACCEPT + "[BROKER " + brokerId + "] order has been ACCEPTED." + RESET);
+				if (response.contains("39=8"))
+					System.out.println(REJECT + "[BROKER " + brokerId + "] order has been REJECTED." + RESET);
+				Sleep(1);
 			}
 		} catch (IOException e) {
 			System.err.println("Failed to read input stream");

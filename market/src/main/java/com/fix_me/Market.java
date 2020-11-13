@@ -9,6 +9,12 @@ import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 public class Market {
+	public static final String MARKET = "\u001B[93m";
+	public static final String BROKER   = "\u001B[96m";
+	public static final String ACCEPT = "\u001B[32m";
+	public static final String REJECT = "\u001B[31m";
+	public static final String RESET  = "\u001B[0m";
+
 	private static final String serverIp = "127.0.0.1";
 	private static final int serverPort = 5001;
 	private static BufferedReader in = null;
@@ -17,10 +23,6 @@ public class Market {
 	private static Scanner scan = null;
 	private static String responses = null;
 	private static String marketId;
-	// private static String brokerId;
-
-	// private static int brokerCount = 0;
-	// private static int marketCount = 0;
 	private static ArrayList<Product> products = new ArrayList<Product>();
 	private static BrokerMessageHandler brokerMsg = null;
 
@@ -29,13 +31,12 @@ public class Market {
 		getProductlist();
 
 		String msg = null;
-		// int count = 0;
 		try {
 			while (true) {
 				msg = in.readLine();
 				if (!msg.equals(null)) {
-					System.out.println("[MARKET " + marketId + "] Request from Broker: " + msg);
-					// getBrokerId(msg);
+					System.out.println(BROKER + "[MARKET " + marketId + "] Request from Broker: " + msg + RESET);
+					Sleep(1);
 					brokerMsg = getBrokerMsg(msg);
 					if (analyseMsg(brokerMsg)) {
 						//  Accept msg
@@ -44,12 +45,8 @@ public class Market {
 						// Decline msg
 						sendResponses("|39=8|");
 					}
-
 				}
-				// else
-				// count++;
 			}
-			// closeConnections();
 		} catch (NullPointerException e) {
 			System.err.println("Lost connection to server.");
 			// e.printStackTrace();
@@ -66,12 +63,12 @@ public class Market {
 		if (checkIfProductExistInProductList(brokerMsg)) {
 			return true;
 		}
-		System.out.println("Market.analyseMsg()");
+//		System.out.println("Market.analyseMsg()");
 		return false;
 	}
 
 	private static boolean checkIfProductExistInProductList(BrokerMessageHandler brokerMsg) {
-		// checks wheather the product in the product list
+		// checks whether the product in the product list
 		for (Product product : products) {
 			if (brokerMsg.getSymbol().equalsIgnoreCase(product.getItem())) {
 				if (clarifyBuyOrSell(brokerMsg, product)) {
@@ -79,7 +76,7 @@ public class Market {
 				}
 			}
 		}
-		System.out.println("Market.checkIfProductExistInProductList()");
+//		System.out.println("Market.checkIfProductExistInProductList()");
 		return false;
 	}
 
@@ -103,7 +100,7 @@ public class Market {
 				}
 			}
 		}
-		System.out.println("Market.clarifyBuyOrSell()");
+//		System.out.println("Market.clarifyBuyOrSell()");
 		return false;
 	}
 
@@ -127,7 +124,7 @@ public class Market {
 				}
 			}
 		}
-		System.out.println("Market.validatePricePoint()");
+//		System.out.println("Market.validatePricePoint()");
 		return false;
 	}
 
@@ -177,7 +174,7 @@ public class Market {
 			closeConnections();
 		} catch (NumberFormatException e) {
 			System.err.println("Product file has incorrect format.");
-			System.out.println("[ item name,price,qauntity ]");
+			System.out.println("[ item name,price,quantity ]");
 			closeConnections();
 		}
 		// return null;
@@ -190,7 +187,7 @@ public class Market {
 			out = new PrintWriter(socket.getOutputStream(), true);
 			marketId = in.readLine();
 			// marketId
-			System.out.println("[MARKET " + marketId + "] connected to Router.");
+			System.out.println(MARKET + "[MARKET " + marketId + "] connected to Router." + RESET);
 		} catch (IOException e) {
 			System.err.println("Failed to create connection");
 			System.exit(1);
@@ -198,60 +195,6 @@ public class Market {
 			System.err.println("ERROR: " + e.getLocalizedMessage());
 			System.exit(1);
 		}
-	}
-
-	// public static String generateID(int port) {
-	// StringBuilder id = new StringBuilder();
-	// String uniqueId = null;
-
-	// switch (port) {
-	// case 5000:
-	// id.append("B");
-	// uniqueId = numberPadding(id, nextBrokerId());
-	// break;
-	// case 5001:
-	// id.append("M");
-	// uniqueId = numberPadding(id, nextMarketId());
-	// default:
-	// break;
-	// }
-	// return uniqueId;
-	// }
-
-	// public static String numberPadding(StringBuilder id, int count) {
-	// while (id.length() + Integer.toString(count).length() < 6) {
-	// id.append("0");
-	// }
-	// id.append(count);
-	// return id.toString();
-	// }
-
-	// public static int nextBrokerId() {
-	// return (++brokerCount);
-	// }
-
-	// public static int nextMarketId() {
-	// return (++marketCount);
-	// }
-
-	private static Scanner readFile() {
-		try {
-			File fix_message = new File("MarketResponses.txt");
-			Boolean exists = fix_message.exists();
-			if (!exists) {
-				System.out.println("File does not exist - Creating file.");
-				fix_message.createNewFile();
-			}
-			Scanner scan = new Scanner(fix_message);
-			return scan;
-		} catch (FileNotFoundException e) {
-			System.err.println("File not found!");
-			System.exit(1);
-		} catch (IOException e) {
-			System.err.println("Failed to create file.");
-			System.exit(1);
-		}
-		return null;
 	}
 
 	private static void Sleep(long time) {
@@ -265,33 +208,13 @@ public class Market {
 	private static void sendResponses(String response) {
 		String FIXMsg = constructFIXmsg(response);
 		out.println(FIXMsg);
-		System.out.println("[MARKET " + marketId + "] responding to Broker: " + FIXMsg);
+		if (response.contains("39=2"))
+			System.out.println(ACCEPT + "[MARKET " + marketId + "] order ACCEPTED." + RESET);
+		if (response.contains("39=8"))
+			System.out.println(REJECT + "[MARKET " + marketId + "] order REJECTED." + RESET);
+		System.out.println(MARKET + "[MARKET " + marketId + "] responding with: " + FIXMsg + RESET);
 	}
 
-	private static void sendResponses() {
-		scan = readFile();
-		if (scan == null) {
-			System.err.println("Was unable to read file.");
-			System.exit(1);
-		}
-		while (true) {
-			if (!scan.hasNextLine()) {
-				break;
-			}
-			Sleep(2);
-			responses = scan.nextLine();
-			String FIXMsg = constructFIXmsg(responses);
-			// String status = getStatus(FIXMsg);
-			out.println(FIXMsg);
-			System.out.println("[MARKET " + marketId + "] responding to Broker: " + FIXMsg);
-		}
-	}
-
-	// private static void getBrokerId(String request) {
-
-	// BrokerMessageHandler check = new BrokerMessageHandler(request);
-	// brokerId = check.getRouterSenderID();
-	// }
 	private static BrokerMessageHandler getBrokerMsg(String request) {
 
 		BrokerMessageHandler check = new BrokerMessageHandler(request);
@@ -304,12 +227,6 @@ public class Market {
 		return checksum;
 	}
 
-	private static String getStatus(String response) {
-		BrokerMessageHandler check = new BrokerMessageHandler(response);
-		String status = check.getStatus();
-		return status;
-	}
-
 	private static String constructFIXmsg(String response) {
 		String fullResponse = "49=" + marketId + "|56=" + brokerMsg.getRouterSenderID() + response;
 		String checksum = getChecksum(fullResponse.toString());
@@ -320,7 +237,7 @@ public class Market {
 	private static void closeConnections() {
 		try {
 			socket.close();
-			System.out.println("[MARKET " + marketId + "] connection Closing...");
+			System.out.println(MARKET + "[MARKET " + marketId + "] connection Closing..." + RESET);
 			System.exit(1);
 		} catch (IOException e) {
 			System.err.println("Failed to close connections");

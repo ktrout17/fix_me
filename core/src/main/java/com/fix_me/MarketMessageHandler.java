@@ -9,11 +9,6 @@ public class MarketMessageHandler {
 	@Getter @Setter String routerRecieverId;
 	@Getter @Setter int status;
 	@Getter @Setter int checksum;
-	// int quantity;
-	// String market;
-	// float price;
-	// String symbol;
-	// int side;
 
 	public MarketMessageHandler(String message) {
 		this.message = message;
@@ -38,21 +33,6 @@ public class MarketMessageHandler {
 					case "10":
 						this.checksum = Integer.parseInt(MsgSection[1]);
 						break;
-					// case "56":
-					// this.market = MsgSection[1];
-					// break;
-					// case "54":
-					// this.side = Integer.parseInt(MsgSection[1]);
-					// break;
-					// case "55":
-					// this.symbol = MsgSection[1];
-					// break;
-					// case "44":
-					// this.price = Float.parseFloat(MsgSection[1]);
-					// break;
-					// case "38":
-					// this.quantity = Integer.parseInt(MsgSection[1]);
-					// break;
 					default:
 				}
 			}
